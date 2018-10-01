@@ -3,22 +3,12 @@ import { Template } from 'meteor/templating';
 import { Timers } from '../api/timers.js';
 
 import './body.html';
- 
+
+
 Template.body.helpers({
-  timers2: [
-    { name: 'Karl', time: '00:12'},
-    { name: 'Heinz', time: '00:23'},
-    { name : 'Peter', time: '00:45'},
-    { name: 'Jürgen', time: '00:56'},
-    { name: 'Dieter', time: '00:67' },
-    { name : 'Tobias',time: '00:78' },
-  ],
-  loggedIn: true,
-  loggedIn2 () {
-    return true;
-  },
   timers() {
-    return Timers.find({}, { sort: { createdAt: -1 } });
+    //return Timers.find({}, { sort: { createdAt: 1 } });
+    return Timers.find({});
   },
 });
 
@@ -27,27 +17,25 @@ Template.body.events({
     // Prevent default browser form submit
     event.preventDefault();
  
-    // Get value from form element
-    const target = event.target,
-          name = target.text.value;
+    // Get value from form element  
+     const target = event.target,
+           name = target.text.value;
  
     // Insert a task into the collection
-    Timers.insert(Object.assign({
-      name: 'No Name',
-      time: {
-        hours: 0,
-        minutes: 0,
-        seconds: 0
-      },
-      running: false,
-      createdAt: new Date(), // current time
-    },{
-      name,
-    }));
- 
+    Timers.insert({name: name});
+    console.log(Timers.find({}).fetch());
     // Clear form
     target.text.value = '';
   },
+
+  'click .stop-all-timers-btn'(event) {
+    console.info('stop all timers')
+    Timers.find({running:true}).fetch().forEach(timer => {
+      Timers.update(timer._id, {
+        $set: { running: false }
+      });
+    });
+  }
 });
 
 Template.timer.helpers({
@@ -55,6 +43,9 @@ Template.timer.helpers({
   //   ///return Timers.get(this._id).running;
   // },
   formattedTime() {
+    if (typeof this.time !== 'object') {
+      return '00:00:00';
+    }
     return [
       this.time.hours.pad(2),
       this.time.minutes.pad(2),
@@ -69,7 +60,7 @@ Template.timer.events({
       // Meteor.call('start', 1, 2, (error, result) => {
       //   console.log(result);
       // });
-    console.log(this.start());
+    //console.log(this.start());
     //}
     console.info('set timer', this.name, 'to running=', ! this.running);
     // }
@@ -78,7 +69,7 @@ Template.timer.events({
       $set: { running: ! this.running }
     });
   },
-  'click .delete-btn'() {
+  'click .delete-btn'() { 
     Timers.remove(this._id);
   },
 });

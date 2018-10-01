@@ -1,3 +1,4 @@
+import '../imports/startup/accounts-config.js';
 import '../imports/ui/body.js';
 
 Number.prototype.pad = function(size) {
@@ -5,6 +6,11 @@ Number.prototype.pad = function(size) {
     while (s.length < (size || 2)) {s = "0" + s;}
     return s;
 }
+
+$(document).ready(function(){
+    $('.modal').modal();
+});
+
 
 // import { Template } from 'meteor/templating';
 // import { ReactiveVar } from 'meteor/reactive-var';

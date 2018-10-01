@@ -1,11 +1,21 @@
-<body>
-    <header>
+<body class="layout-dark">
+    <header id="header" class="page-topbar">
       <nav>
         <div class="nav-wrapper">
-          <a href="#" class="brand-logo">Time Tracker</a>
-          <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="sass.html">Login</a></li>
+          <a href="#" class="brand-logo">Time-Tracker</a>
+           
+          <ul id="nav-mobile" class="center hide-on-med-and-down">
+              {{> loginButtons}} 
           </ul>
+          {{#if currentUser}}
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <span class="text">Welcome <strong>{{currentUser}}</strong></span>
+            <a href="#addTimerDialog" class="waves-effect waves-light btn modal-trigger"><i class="material-icons">add</i></a>
+            <a class="stop-all-timers-btn waves-effect waves-light btn"><i class="material-icons">stop</i></a>
+            <a class="reset-all-timers-btn waves-effect waves-light btn"><i class="material-icons">highlight_off</i></a>
+          </ul>
+          {{/if}}
+          
         </div>
       </nav>
     </header>
@@ -15,10 +25,21 @@
         {{/each}}
     </main>    
     <footer class="page-footer">
-      <form class="new-timer">
-        <input type="text" name="text" placeholder="Type to add new timer" />
-      </form>
+      
     </footer>
+
+    <!-- Modal Structure -->
+    <div id="addTimerDialog" class="modal">
+      <div class="modal-content">
+        <h4>Create Timers</h4>
+        <form class="new-timer">
+          <input type="text" name="text" placeholder="name for new timer and press enter"/>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+      </div>
+    </div>
   </body>
    
   <template name="timer">
@@ -36,7 +57,7 @@
                 {{/if}}
               </i></a>
             </div>
-            {{#if loggedIn=true}}
+            {{#if currentUser}}
               <div class="card-action">
                   <a class="delete-btn waves-effect waves-light btn"><i class="material-icons">delete</i></a>
               </div>

@@ -1,9 +1,9 @@
 # docker-compose.yml
 
 app:
-  image: the-duke/time-tracker
+  image: theduke84/time-tracker
   ports:
-    - "80:3000"
+    - "8080:3000"
   links:
     - mongo
   environment:
