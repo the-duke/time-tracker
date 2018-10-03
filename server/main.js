@@ -69,6 +69,16 @@ function masterTimerLoop () {
   });
 };
 
+const logCtrl = {
+  createLogEntry (timer) {
+    console.log('create log entry for timer name', timer.name);
+    Logs.insert({
+      timerId: timer._id,
+      startTime: timer.startedAt
+    });
+  }
+};
+
 const timerCtrl = {
   startTimer (timer) {
     console.log('start timer with name', timer.name);
@@ -85,6 +95,8 @@ const timerCtrl = {
     Timers.update(timer._id, {
       $set: { running: false }
     });
+    
+    logCtrl.createLogEntry(timer);
   },
 
   tickTimer (timer) {

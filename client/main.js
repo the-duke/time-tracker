@@ -1,5 +1,12 @@
 import '../imports/startup/accounts-config.js';
-import '../imports/ui/body.js';
+//import '../imports/ui/body.js';
+
+import '../lib/router.js';
+
+import './layouts/homeLayout.html';
+import './layouts/notFound.html';
+import './layouts/mainLayout.js';
+
 
 Number.prototype.pad = function(size) {
     var s = String(this);
@@ -7,9 +14,7 @@ Number.prototype.pad = function(size) {
     return s;
 }
 
-$(document).ready(function(){
-    $('.modal').modal();
-});
+
 
 
 // import { Template } from 'meteor/templating';

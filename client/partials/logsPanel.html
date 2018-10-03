@@ -1,0 +1,35 @@
+
+<template name="logsPanel">
+    <main class="log-entry-container">
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>Timer</th>
+                    <th>User</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Duration</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each logs}}
+                    {{> logEntry}}
+                {{/each}}
+            </tbody>
+        </table>
+    </main> 
+</template>
+
+<template name="logEntry">
+    <tr>
+        <td>{{userName}}</td>
+        <td>{{userName}}</td>
+        <td>{{startTime}}</td>
+        <td>{{endTime}}</td>
+        <td>{{runTime}}</td>
+        <td>
+            <a class="delete-log-entry-btn waves-effect waves-light btn"><i class="material-icons">delete</i></a> 
+        </td>
+    </tr>
+</template>

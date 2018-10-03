@@ -31,7 +31,7 @@ Schemas.Log = new SimpleSchema({
   },
   userName: {
     type: String,
-    optional: false
+    defaultValue: 'system',
   },
   startTime: {
     type: Date,
