@@ -56,22 +56,26 @@ Template.timer.helpers({
 
 Template.timer.events({
   'click .toggle-running-btn'() {
-    //if (!this.running) {
-      // Meteor.call('start', 1, 2, (error, result) => {
-      //   console.log(result);
-      // });
-    //console.log(this.start());
-    //}
     console.info('set timer', this.name, 'to running=', ! this.running);
-    // }
-    // Set the checked property to the opposite of its current value
-    Timers.update(this._id, {
-      $set: { running: ! this.running }
-    });
+
+    if (!this.running) {
+      Meteor.call('startTimer', this, (error, result) => {
+        console.log(result);
+      });
+    } else {
+      Meteor.call('stopTimer', this, (error, result) => {
+        console.log(result);
+      });
+    }
   },
-  'click .delete-btn'() { 
+  'click .delete-btn'() {
     Timers.remove(this._id);
   },
+  'click .reset-btn'() {
+    Meteor.call('resetTimer', this, (error, result) => {
+      console.log(result);
+    });
+  }
 });
 
 

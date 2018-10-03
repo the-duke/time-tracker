@@ -24,6 +24,9 @@ materialize:materialize
 less
 accounts-ui
 accounts-password
-kadira:flow-router
 kadira:blaze-layout
 aldeed:collection2@3.0.0
+houston:admin
+ostrio:flow-router-extra
+underscore
+momentjs:moment

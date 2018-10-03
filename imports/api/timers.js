@@ -1,40 +1,10 @@
 import { Mongo } from 'meteor/mongo';
 import _ from 'lodash';
 import SimpleSchema from 'simpl-schema';
+//import TimeSchema from './timeSchema';
 
-// class Timer {
-//     constructor(doc) {
-        
-
-//         // this.name = 'No Name';
-//         // this.time = {
-//         //     hours: 0,
-//         //     minutes: 0,
-//         //     seconds: 0
-//         // };
-//         // this.running = false;
-
-//         _.extend(this, doc);
-//         //this.createdAt = new Date();
-//     }
-
-//     _tick () {
-//       this.time.seconds++;
-//       if (this.time.seconds >= 60) {
-//         this.time.seconds = 0;
-//         this.time.minutes++;
-//         if (this.time.minutes >= 60) {
-//           this.time.minutes = 0;
-//           this.time.hours++;
-//         }
-//       }
-//     }
-//   }
-  
   // Define a collection that uses `Timer` as its document.
-  export const Timers = new Mongo.Collection('timers', {
-    //transform: (doc) => new Timer(doc)
-  }); 
+  export const Timers = new Mongo.Collection('timers'); 
   
   const Schemas = {};
 
@@ -63,12 +33,20 @@ import SimpleSchema from 'simpl-schema';
       defaultValue: false
     },
     time: {
-      type:  Schemas.Time,
+      type: Schemas.Time,
       defaultValue: {
         hours: 0,
         minutes: 0,
         seconds: 0
       }
+    },
+    startedAt: {
+      type: Date,
+      defaultValue: new Date()
+    },
+    resettedAt: {
+      type: Date,
+      defaultValue: new Date()
     },
     createdAt: {
       type: Date,
