@@ -3,6 +3,11 @@ import { Timers } from '../../imports/api/timers.js';
 
 import './timersPanel.html';
 
+Template.timersPanel.onRendered(function() {
+    console.log('on rendered timersPanel');
+    $('.modal').modal();
+});
+
 Template.timersPanel.helpers({
     timers() {
       //return Timers.find({}, { sort: { createdAt: 1 } });

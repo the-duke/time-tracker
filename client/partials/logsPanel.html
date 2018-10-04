@@ -1,35 +1,53 @@
 
 <template name="logsPanel">
-    <main class="log-entry-container">
-        <table class="striped">
-            <thead>
-                <tr>
-                    <th>Timer</th>
-                    <th>User</th>
-                    <th>Start Time</th>
-                    <th>End Time</th>
-                    <th>Duration</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each logs}}
-                    {{> logEntry}}
-                {{/each}}
-            </tbody>
-        </table>
-    </main> 
+    {{#if currentUser}}
+        
+        <div class="input-field col s12">
+            <select multiple>
+              <option value="" disabled selected>Choose your option</option>
+              <option value="1">Option 1</option>
+              <option value="2">Option 2</option>
+              <option value="3">Option 3</option>
+            </select>
+            <label>Materialize Multiple Select</label>
+        </div>
+        
+        <nav>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                
+            </ul>
+        </nav>
+        <main class="log-entry-container"> 
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th>Timer</th>
+                        <th>User</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Duration</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each logs}}
+                        {{> logEntry}}
+                    {{/each}}
+                </tbody>
+            </table>
+        </main>
+    {{/if}}
 </template>
 
 <template name="logEntry">
     <tr>
-        <td>{{userName}}</td>
+        <td>{{timerName}}</td>
         <td>{{userName}}</td>
         <td>{{startTime}}</td>
         <td>{{endTime}}</td>
         <td>{{runTime}}</td>
         <td>
-            <a class="delete-log-entry-btn waves-effect waves-light btn"><i class="material-icons">delete</i></a> 
+            <a class="delete-btn waves-effect waves-light btn"><i class="material-icons">delete</i></a> 
         </td>
     </tr>
 </template>

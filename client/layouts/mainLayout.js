@@ -5,8 +5,9 @@ import '../partials/logsPanel.js';
 
 import './mainLayout.html';
 
-
-$(document).ready(function(){
-    $('.modal').modal();
+Template.mainLayout.onRendered(function() {
+    console.log('on rendered mainLayout');
+    //$('.modal').modal();
+    
 });
 

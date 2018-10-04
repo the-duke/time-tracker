@@ -1,7 +1,17 @@
 import { Template } from 'meteor/templating';
 import { Logs } from '../../imports/api/logs';
+import { Timers } from '../../imports/api/timers';
 
 import './logsPanel.html';
+
+Template.logsPanel.onRendered(function() {
+    console.log('on rendered logsPanel');
+    
+    //const selectInputs = $('.input-field');
+    //console.log(selectInputs);
+    //$('select').material_select();
+    //$('select')
+});
 
 Template.logsPanel.helpers({
     logs() {
@@ -12,18 +22,7 @@ Template.logsPanel.helpers({
 
 Template.logsPanel.events({
     'submit .new-timer'(event) {
-        // // Prevent default browser form submit
-        // event.preventDefault();
-   
-        //  // Get value from form element  
-        // const   target = event.target,
-        //         name = target.text.value;
-   
-        // // Insert a task into the collection
-        // Timers.insert({name: name});
-        // //console.log(Timers.find({}).fetch());
-        // // Clear form
-        // target.text.value = '';
+
     },
   
     'click .stop-all-timers-btn'(event) {
@@ -37,6 +36,26 @@ Template.logsPanel.events({
 });
   
 Template.logEntry.helpers({
+    timerName () {
+        var timer = Timers.findOne({ _id: this.timerId });
+        return timer? timer.name : 'MISSING';
+    },
+
+    startTime () {
+        return moment(this.startTime).format('DD.MM.YYYY HH:mm:ss');
+    },
+
+    endTime () {
+        return moment(this.endTime).format('DD.MM.YYYY HH:mm:ss');
+    },
+
+    runTime () {
+        const   now = moment(this.endTime),
+                then = moment(this.startTime);
+
+        return moment.utc(moment(now,"DD/MM/YYYY HH:mm:ss").diff(moment(then,"DD/MM/YYYY HH:mm:ss"))).format("HH:mm:ss")
+    },
+
     formattedTime() {
         if (typeof this.time !== 'object') {
             return '00:00:00';
@@ -54,8 +73,8 @@ Template.logEntry.events({
         console.info('set timer');
     },
     'click .delete-btn'() {
-        console.info('set timer')
-        //Timers.remove(this._id);
+        console.info('delete log-entry with id', this._id);
+        Logs.remove(this._id);
     },
     'click .reset-btn'() {
 

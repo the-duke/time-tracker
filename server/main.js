@@ -74,7 +74,8 @@ const logCtrl = {
     console.log('create log entry for timer name', timer.name);
     Logs.insert({
       timerId: timer._id,
-      startTime: timer.startedAt
+      startTime: timer.startedAt,
+      endTime: new Date()
     });
   }
 };
@@ -95,7 +96,7 @@ const timerCtrl = {
     Timers.update(timer._id, {
       $set: { running: false }
     });
-    
+
     logCtrl.createLogEntry(timer);
   },
 
