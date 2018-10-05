@@ -35,7 +35,16 @@ Template.timersPanel.events({
     'click .stop-all-timers-btn'(event) {
         console.info('stop all timers')
         Timers.find({running:true}).fetch().forEach(timer => {
-            Meteor.call('stopTimer', this, (error, result) => {
+            Meteor.call('stopTimer', timer, (error, result) => {
+                console.log(result);
+            });
+        });
+    },
+
+    'click .reset-all-timers-btn'(event) {
+        console.info('reset all timers')
+        Timers.find().fetch().forEach(timer => {
+            Meteor.call('resetTimer', timer, (error, result) => {
                 console.log(result);
             });
         });
