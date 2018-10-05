@@ -6,21 +6,38 @@ import './logsPanel.html';
 
 Template.logsPanel.onRendered(function() {
     console.log('on rendered logsPanel');
-    
-    //const selectInputs = $('.input-field');
-    //console.log(selectInputs);
-    //$('select').material_select();
-    //$('select')
+    this.selectedTimer = new ReactiveVar();
 });
 
 Template.logsPanel.helpers({
+    allTimers () {
+        var timer = Template.instance().selectedTimer.get();
+        return Logs.find(timer ? {timerId: timer._id} : {});
+    },
+    timers() {
+        //return Timers.find({}, { sort: { createdAt: 1 } });
+        return Timers.find({});
+    },
+    initialize () {
+        console.log('initialize');
+        $('select').material_select();
+    },
     logs() {
       //return Timers.find({}, { sort: { createdAt: 1 } });
-      return Logs.find({});
+      //return Logs.find({});
+      var timerId = Template.instance().selectedTimer.get();
+      console.log('change Log query', timerId);
+      return Logs.find(timerId ? {timerId: timerId} : {});
     },
 });
 
 Template.logsPanel.events({
+    'change #timerFilter' (event, target){
+        var timerFilter = $(event.target)[0];
+        console.log('change selected Timer', timerFilter.value);
+        target.selectedTimer.set(timerFilter.value);
+    },
+    
     'submit .new-timer'(event) {
 
     },
@@ -34,7 +51,11 @@ Template.logsPanel.events({
         });
     }
 });
-  
+
+Template.logEntry.onRendered(function() {
+    console.log('on rendered logEntry');
+});
+
 Template.logEntry.helpers({
     timerName () {
         var timer = Timers.findOne({ _id: this.timerId });

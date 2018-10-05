@@ -13,7 +13,8 @@ Number.prototype.pad = function(size) {
     while (s.length < (size || 2)) {s = "0" + s;}
     return s;
 }
-
+//render blaze layout to body instead of a div to apply meterialize css correctly
+BlazeLayout.setRoot('body');
 
 
 

@@ -20,7 +20,6 @@ shell-server@0.3.1            # Server-side component of the `meteor shell` comm
 autopublish@1.0.7             # Publish all data to the clients (for prototyping)
 insecure@1.0.7                # Allow all DB writes from clients (for prototyping)
 fourseven:scss
-materialize:materialize
 less
 accounts-ui
 accounts-password
@@ -30,3 +29,4 @@ houston:admin
 ostrio:flow-router-extra
 underscore
 momentjs:moment
+materialize:materialize

@@ -1,22 +1,40 @@
 
 <template name="logsPanel">
     {{#if currentUser}}
-        
-        <div class="input-field col s12">
-            <select multiple>
-              <option value="" disabled selected>Choose your option</option>
-              <option value="1">Option 1</option>
-              <option value="2">Option 2</option>
-              <option value="3">Option 3</option>
-            </select>
-            <label>Materialize Multiple Select</label>
+        <div class="filter-form">
+            <div class="row">
+                <div class="input-field col s4">
+                    <select class=" timerFilter" id="timerFilter">
+                        <option value="" disabled selected>select timer</option>
+                        <option value="">all</option>
+                        {{#each timers}}
+                            <option value="{{_id}}">{{name}}</option>
+                        {{/each}}
+                    </select>
+                    <label>Timer</label>
+                </div>
+                <div class="input-field col s4">
+                <input id="startDate" type="date" class="datepicker">
+                <label for="startDate">Start Date</label>
+                </div>
+                <div class="input-field col s4">
+                    <input id="endDate" type="date" class="datepicker">
+                    <label for="endDate">End Date</label>
+                </div>
+            </div>
+            <script>
+                this.$('select').material_select();
+                this.$('.datepicker').pickadate({
+                    selectMonths: true, // Creates a dropdown to control month
+                    // selectYears: 15, // Creates a dropdown of 15 years to control year,
+                    // today: 'Today',
+                    // clear: 'Clear',
+                    // close: 'Ok',
+                    // closeOnSelect: false // Close upon selecting a date,
+                    // container: undefined, // ex. 'body' will append picker to body
+                });
+            </script>
         </div>
-        
-        <nav>
-            <ul id="nav-mobile" class="right hide-on-med-and-down">
-                
-            </ul>
-        </nav>
         <main class="log-entry-container"> 
             <table class="striped">
                 <thead>
@@ -36,6 +54,7 @@
                 </tbody>
             </table>
         </main>
+        {{initialize}}
     {{/if}}
 </template>
 

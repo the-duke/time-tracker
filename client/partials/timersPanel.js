@@ -17,6 +17,7 @@ Template.timersPanel.helpers({
 
 Template.timersPanel.events({
     'submit .new-timer'(event) {
+        console.info('add new timer');
         // Prevent default browser form submit
         event.preventDefault();
    
@@ -55,7 +56,7 @@ Template.timer.helpers({
 });
 
 Template.timer.events({
-    'click .toggle-running-btn'() {
+    'click .timer-card .card-content, click .toggle-running-btn'() {
         console.info('set timer', this.name, 'to running=', ! this.running);
 
         if (!this.running) {
