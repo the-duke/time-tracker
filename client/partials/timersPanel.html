@@ -1,11 +1,11 @@
 
 <template name="timersPanel">
     {{#if currentUser}}
-    <nav>
-        <ul id="nav-mobile" class="right hide-on-med-and-down">
+    <nav class="grey lighten-3">
+        <ul class="adim-menu right">
             <a href="#addTimerDialog" class="waves-effect waves-light btn modal-trigger"><i class="material-icons">add</i></a>
-            <a class="stop-all-timers-btn waves-effect waves-light btn"><i class="material-icons">stop</i></a>
-            <a class="reset-all-timers-btn waves-effect waves-light btn"><i class="material-icons">highlight_off</i></a>
+            <a class="stop-all-timers-btn blue-grey darken-4 waves-effect waves-light btn"><i class="material-icons">stop</i></a>
+            <a class="reset-all-timers-btn blue waves-effect waves-light btn"><i class="material-icons">highlight_off</i></a>
         </ul>
     </nav>
     {{/if}}
@@ -44,9 +44,13 @@
                     </i></a>
                 </div>
                 {{#if currentUser}}
-                    <div class="card-action blue-grey darken-2">
-                        <a class="delete-btn waves-effect waves-light btn"><i class="material-icons">delete</i></a>
-                        <a class="reset-btn waves-effect waves-light btn"><i class="material-icons">highlight_off</i></a>
+                    <div class="card-action row blue-grey darken-2">
+                        <div class="col s6">
+                        <a class="delete-btn red left waves-effect waves-light btn"><i class="material-icons">delete</i></a>
+                        </div>
+                        <div class="col s6">
+                        <a class="reset-btn blue right waves-effect waves-light btn"><i class="material-icons">highlight_off</i></a>
+                        </div>
                     </div>
                 {{/if}}
             </div> 
