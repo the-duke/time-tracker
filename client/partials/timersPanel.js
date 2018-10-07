@@ -52,7 +52,10 @@ Template.timersPanel.events({
 });
   
 Template.timer.helpers({
-    formattedTime() {
+    runningClass () {
+        return this.running? 'running-timer' : '';
+    },
+    formattedTime () {
         if (typeof this.time !== 'object') {
             return '00:00:00';
         }

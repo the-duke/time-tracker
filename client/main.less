@@ -9,7 +9,28 @@ body {
   flex-direction: column;
 
   overflow: hidden;
-} 
+}
+
+.app-logo {
+  position: absolute;
+  color: #fff;
+  display: inline-block;
+  font-size: 2.1rem;
+  padding: 0;
+
+  i.material-icons {
+    display: block;
+    float: left;
+    margin: 0 15px;
+    font-size: 48px;
+  }
+
+  i.app-label  {
+    display: block;
+    float: left;
+    font-size: 38px;
+  }
+}
 
 main {
   flex: 1 0 auto; 
@@ -34,6 +55,13 @@ main {
 .timer-card {
   flex: 0 1 calc(25% - 1em);
   text-align: center;
+
+  &.running-timer {
+    .card-content {
+      background-color: #43a047 !important;
+      //color: #a5d6a7 !important;
+    }
+  }
 
   .card-content {
     cursor: pointer;

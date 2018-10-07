@@ -2,10 +2,19 @@
     <header id="header" class="page-topbar blue-grey darken-2">
         <nav>
             <div class="nav-wrapper blue-grey darken-2">
-                <a href="#" class="brand-logo">Time-Tracker</a>
-                    
-                <ul id="nav-mobile" class="center hide-on-med-and-down">
-                    {{> loginButtons}} 
+                <a href="#" class="brand-logo app-logo">
+                    <i class="large material-icons">access_alarms</i>  
+                    <i class="app-label">Time-Tracker</i> 
+                </a>
+                <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    {{> loginButtons}}
+                    {{#if isActiveRoute 'timers'}}
+                        <li><a href="/logs">Logs</a></li>
+                    {{/if}}
+                    {{#if isActiveRoute 'logs'}}
+                        <li><a href="/">Timers</a></li>
+                    {{/if}}
+                    <li><a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a></li>
                 </ul>
             </div>
         </nav>
