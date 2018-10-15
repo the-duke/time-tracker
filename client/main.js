@@ -16,7 +16,9 @@ Number.prototype.pad = function(size) {
 //render blaze layout to body instead of a div to apply meterialize css correctly
 BlazeLayout.setRoot('body');
 
-
+Accounts.config({
+  forbidClientAccountCreation : true
+});
 
 // import { Template } from 'meteor/templating';
 // import { ReactiveVar } from 'meteor/reactive-var';

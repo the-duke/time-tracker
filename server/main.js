@@ -2,15 +2,41 @@ import { Meteor } from 'meteor/meteor';
 import { Timers } from '../imports/api/timers.js';
 import { Logs } from '../imports/api/logs.js';
 
-const config = {
+let config = {
   timerLimit: {
     hours: 0,
-    minutes: 1,
+    minutes: 10,
     seconds: 0
   }
 }
 
 Meteor.startup(() => {
+  var defaultUsers = Meteor.settings.defaultUsers;
+  _.each(defaultUsers, function (user) {
+    const exsitingUser = Accounts.findUserByEmail(user.email);
+    if (exsitingUser) {
+      console.log('user exsits - skip user creation for default user:', user.name);
+    } else {
+      console.log('add default user from settings.json', user.name);
+      let id = Accounts.createUser({
+        email: user.email,
+        password: user.password,
+        profile: { name: user.name }
+      });
+      if (user.roles.length > 0) {
+        // Need _id of existing user record so this call must come
+        // after `Accounts.createUser` or `Accounts.onCreate`
+        //Roles.addUsersToRoles(id, user.roles, 'default-group');
+      }
+
+    }
+  });
+
+  if (Meteor.settings.timerLimit) {
+    console.log('use timerLimit settings.json', Meteor.settings.timerLimit);
+    Object.assign(config.timerLimit, Meteor.settings.timerLimit);
+  }
+
   // code to run on server at startup
   // const allTimers = Timers.find({});
 

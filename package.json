@@ -19,5 +19,9 @@
       "server": "server/main.js"
     },
     "testModule": "tests/main.js"
+  },
+  "scripts": { 
+    "start": "meteor run", 
+    "dev": "meteor --settings settings.json"
   }
 }
