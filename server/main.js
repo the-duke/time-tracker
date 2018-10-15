@@ -11,7 +11,14 @@ let config = {
 }
 
 Meteor.startup(() => {
-  var defaultUsers = Meteor.settings.defaultUsers;
+
+  let removeAllUsers = Meteor.settings.removeAllUsers,
+      defaultUsers = Meteor.settings.defaultUsers;
+
+  if (removeAllUsers) {
+    console.log('remove all users on app start');
+    Meteor.users.rawCollection().drop();
+  }
   _.each(defaultUsers, function (user) {
     const exsitingUser = Accounts.findUserByEmail(user.email);
     if (exsitingUser) {
@@ -19,6 +26,7 @@ Meteor.startup(() => {
     } else {
       console.log('add default user from settings.json', user.name);
       let id = Accounts.createUser({
+        username: user.name,
         email: user.email,
         password: user.password,
         profile: { name: user.name }
@@ -36,36 +44,6 @@ Meteor.startup(() => {
     console.log('use timerLimit settings.json', Meteor.settings.timerLimit);
     Object.assign(config.timerLimit, Meteor.settings.timerLimit);
   }
-
-  // code to run on server at startup
-  // const allTimers = Timers.find({});
-
-  // let handle = allTimers.observeChanges({
-  //   added: function (id, message) {
-  //     //count++;
-  //     //console.log(Timers.message + " brings the total to " + count + " messages.",id, message);
-  //   },
-  //   changed: function (id, fields) {
-  //     if (typeof fields['running'] === 'boolean') {
-  //        if (fields['running']) {
-  //           console.log("timer was started.", id);
-            
-  //           // const startedAt = new Date();
-            
-  //           // Timers.update(id, {
-  //           //   $set: { startedAt: startedAt }
-  //           // });
-  //        } else {
-  //           console.log("timer was stopped.", id);
-  //        }
-  //     }
-  //   },
-  //   removed: function () {
-  //     //count--;
-  //    // console.log("Lost one. We're now down to " + count + " admins.");
-  //   }
-  // });
-
 
   const masterTimer = Meteor.setInterval(() => {
     masterTimerLoop();
