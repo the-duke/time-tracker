@@ -68,7 +68,8 @@ Template.timer.helpers({
 });
 
 Template.timer.events({
-    'click .timer-card .card-content, click .toggle-running-btn'() {
+    //, click .toggle-running-btn
+    'click .timer-card .card-content'() {
         console.info('set timer', this.name, 'to running=', ! this.running);
 
         if (!this.running) {

@@ -14,29 +14,40 @@
                     <label>Timer</label>
                 </div>
                 <div class="input-field col s4">
-                <input id="startDate" type="date" class="datepicker">
-                <label for="startDate">Start Date</label>
+                <input id="startDateFilter" type="date" class="datepicker">
+                <label for="startDateFilter">Start Date</label>
                 </div>
                 <div class="input-field col s4">
-                    <input id="endDate" type="date" class="datepicker">
-                    <label for="endDate">End Date</label>
+                    <input id="endDateFilter" type="date" class="datepicker">
+                    <label for="endDateFilter">End Date</label>
                 </div>
             </div>
             <script>
                 this.$('select').material_select();
-                this.$('.datepicker').pickadate({
+                this.$('#startDateFilter').pickadate({
+                    //format: 'dd.mm.yyyy',
                     selectMonths: true, // Creates a dropdown to control month
-                    // selectYears: 15, // Creates a dropdown of 15 years to control year,
-                    // today: 'Today',
-                    // clear: 'Clear',
-                    // close: 'Ok',
+                    selectYears: 15, // Creates a dropdown of 15 years to control year
+                    onStart: function() {
+                        var date = new Date();
+                        this.set('select', [date.getFullYear(), date.getMonth(), 1 /*date.getDate()*/]);
+                    }
                     // closeOnSelect: false // Close upon selecting a date,
-                    // container: undefined, // ex. 'body' will append picker to body
+                });
+                this.$('#endDateFilter').pickadate({
+                    //format: 'dd.mm.yyyy',
+                    selectMonths: true, // Creates a dropdown to control month
+                    selectYears: 15, // Creates a dropdown of 15 years to control year
+                    onStart: function() {
+                        var date = new Date();
+                        this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
+                    }
+                    // closeOnSelect: false // Close upon selecting a date,
                 });
             </script>
         </div>
         <main class="log-entry-container"> 
-            <table class="striped">
+            <table id="log-data-table" class="striped log-data">
                 <thead>
                     <tr>
                         <th>Timer</th>
@@ -53,7 +64,22 @@
                     {{/each}}
                 </tbody>
             </table>
+            <div class="col-md-12 center text-center">
+                <span class="left" id="total_reg"></span>
+                <ul class="pagination pager" id="myPager"></ul>
+            </div>
         </main>
+        <script>
+            // this.$('#log-data-table').pageMe({
+            //     pagerSelector:'#myPager',
+            //     activeColor: 'blue',
+            //     prevText:'Anterior',
+            //     nextText:'Siguiente',
+            //     showPrevNext:true,
+            //     hidePageNumbers:false,
+            //     perPage:10
+            // });
+        </script>
         {{initialize}}
     {{else}}
         <div>

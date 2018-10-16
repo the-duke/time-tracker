@@ -7,6 +7,8 @@ import './logsPanel.html';
 Template.logsPanel.onRendered(function() {
     console.log('on rendered logsPanel');
     this.selectedTimer = new ReactiveVar();
+    this.startTime = new ReactiveVar();
+    this.endTime = new ReactiveVar();
 });
 
 Template.logsPanel.helpers({
@@ -25,9 +27,19 @@ Template.logsPanel.helpers({
     logs() {
       //return Timers.find({}, { sort: { createdAt: 1 } });
       //return Logs.find({});
-      var timerId = Template.instance().selectedTimer.get();
+      var   timerId = Template.instance().selectedTimer.get(),
+            startTime = Template.instance().startTime.get(),
+            endTime = Template.instance().endTime.get();
+
       console.log('change Log query', timerId);
-      return Logs.find(timerId ? {timerId: timerId} : {});
+      let filter = {
+        startTime: { $gte: startTime },
+        endTime: { $lte: endTime }
+      };
+      if (timerId) {
+        filter['timerId'] = timerId;
+      }
+      return Logs.find(filter);
     },
 });
 
@@ -37,12 +49,24 @@ Template.logsPanel.events({
         console.log('change selected Timer', timerFilter.value);
         target.selectedTimer.set(timerFilter.value);
     },
-    
-    'submit .new-timer'(event) {
 
+    'change #startDateFilter' (event, target){
+        var dateFilter = $(event.target);
+            date = new Date(dateFilter.val());
+
+        console.log('changed startTime to', date);
+        target.startTime.set(date);
+    },
+    
+    'change #endDateFilter' (event, target){
+        var dateFilter = $(event.target);
+            date = new Date(dateFilter.val());
+
+        console.log('changed endTime to', date);
+        target.endTime.set(date);
     },
   
-    'click .stop-all-timers-btn'(event) {
+    'click #foo, click .stop-all-timers-btn'(event) {
         console.info('stop all timers')
         Timers.find({running:true}).fetch().forEach(timer => {
             Meteor.call('stopTimer', this, (error, result) => {

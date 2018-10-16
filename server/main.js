@@ -86,6 +86,10 @@ const logCtrl = {
 
 const timerCtrl = {
   startTimer (timer) {
+    if (timer.running) {
+      return;
+    }
+
     console.log('start timer with name', timer.name);
     Timers.update(timer._id, {
       $set: { 
@@ -96,6 +100,10 @@ const timerCtrl = {
   },
 
   stopTimer (timer) {
+    if (!timer.running) {
+      return;
+    }
+
     console.log('stop timer with name', timer.name);
     Timers.update(timer._id, {
       $set: { running: false }
