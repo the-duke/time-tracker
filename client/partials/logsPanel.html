@@ -64,6 +64,11 @@
                     {{/each}}
                 </tbody>
             </table>
+            <ul> 
+                {{#each timerTotals}}
+                    <li>{{name}}: {{time}} (minutes)</li>
+                {{/each}}
+            </ul>
             <div class="col-md-12 center text-center">
                 <span class="left" id="total_reg"></span>
                 <ul class="pagination pager" id="myPager"></ul>

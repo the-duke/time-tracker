@@ -9,7 +9,42 @@ Template.logsPanel.onRendered(function() {
     this.selectedTimer = new ReactiveVar();
     this.startTime = new ReactiveVar();
     this.endTime = new ReactiveVar();
+
+    this.totalTimes = new ReactiveVar("Waiting for response from server...");
+    //this.updateTotalTimes = () => {
+        Meteor.call('getTotalTimeByFilter', buildLogFilter(), (error, result) => {
+            if(error) {
+                console.log(error);
+            } else {
+                console.log(result);
+                this.totalTime.set(result);
+            }
+        });
+    //};
+    //this.updateTotalTimes();
 });
+
+const buildLogFilter = () => {
+    const selectedTimer = Template.instance().selectedTimer,
+          startTime = Template.instance().startTime,
+          endTime = Template.instance().endTime;
+    
+    let filter = {};
+    if (selectedTimer && selectedTimer.get() ) {
+        filter['timerId'] = selectedTimer.get();
+    }
+    if (startTime && startTime.get()) {
+        filter['startTime'] = { $gte: startTime.get() };
+    }
+    if (endTime && endTime.get()) {
+        //set end date to 23:59
+        let endDateObj = endTime.get();
+        endDateObj.setHours(23);
+        endDateObj.setMinutes(59);
+        filter['endTime'] = { $lte: endDateObj };
+    }
+    return filter;
+};
 
 Template.logsPanel.helpers({
     allTimers () {
@@ -24,23 +59,29 @@ Template.logsPanel.helpers({
         console.log('initialize');
         $('select').material_select();
     },
-    logs() {
-      //return Timers.find({}, { sort: { createdAt: 1 } });
-      //return Logs.find({});
-      var   timerId = Template.instance().selectedTimer.get(),
-            startTime = Template.instance().startTime.get(),
-            endTime = Template.instance().endTime.get();
-
-      console.log('change Log query', timerId);
-      let filter = {
-        startTime: { $gte: startTime },
-        endTime: { $lte: endTime }
-      };
-      if (timerId) {
-        filter['timerId'] = timerId;
-      }
-      return Logs.find(filter);
+    logs () {
+        let filter = buildLogFilter();
+        console.log('change Log query filter to', filter);
+        return Logs.find(filter);
     },
+
+     timerTotals () {
+       
+        const totalTimes = Template.instance().totalTime.get();
+        console.log('TotalTime helper called', typeof results);
+        if (typeof totalTimes === 'object') {
+            console.log('compute timerTotals', results);
+            return totalTimes.map( (result) => {
+                    const timerNames = Timers.find({_id: result._id.timerId}).map( (doc) => {
+                        return doc.name;
+                    });
+                    return {
+                        name: timerNames[0],
+                        time: result.totalMinites
+                    };
+                });
+        };
+    }
 });
 
 Template.logsPanel.events({
