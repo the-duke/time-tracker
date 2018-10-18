@@ -85,6 +85,12 @@ const logCtrl = {
 };
 
 const timerCtrl = {
+  addTimer (timerName) {
+      console.log('add timer with name', timerName);
+      Timers.insert({name: timerName});
+      return timerName;
+  },
+
   startTimer (timer) {
     if (timer.running) {
       return;
@@ -144,34 +150,41 @@ const timerCtrl = {
         resettedAt: new Date()
       }
     });
-  },
-
-  async getTotalTimeByFilter(filter) {
-    filter = filter || {};
-    
-    const collection = Logs.rawCollection();
-    const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
-    const group = {
-       _id: {timerId: '$timerId'}, 
-       totalMinites: { 
-         $sum: {
-           $divide: [
-              {$subtract: [ '$endTime', '$startTime' ]},
-              1000 * 60
-           ]
-         }
-      }
-    };
-
-   return await aggregate([
-         { $match: filter },
-         { $group: group }
-    ]).toArray();/*.then( results => {
-       console.log("Result Report:", results);
-    });*/
-   
   }
 
 };
+
+
+async function getTotalTimeByFilter(filter) {
+  filter = filter || {};
+  
+  const collection = Logs.rawCollection();
+  const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
+  const group = {
+      _id: {timerId: '$timerId'}, 
+      totalMinites: { 
+        $sum: {
+          $divide: [
+            {$subtract: [ '$endTime', '$startTime' ]},
+            1000 * 60
+          ]
+        }
+    }
+  };
+
+  return await aggregate([
+        { $match: filter },
+        { $group: group }
+  ]);/*.toArray();/*.then( results => {
+      console.log("Result Report:", results);
+  });*/
+  
+};
+
+
+Meteor.publish('timerTotals', function timerTotalsPublication(filter) {
+    return Timers.find();
+  });
+
 
 Meteor.methods(timerCtrl);  

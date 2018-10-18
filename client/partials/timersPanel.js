@@ -18,17 +18,15 @@ Template.timersPanel.helpers({
 Template.timersPanel.events({
     'submit .new-timer'(event) {
         console.info('add new timer');
-        // Prevent default browser form submit
         event.preventDefault();
-   
-         // Get value from form element  
+
         const   target = event.target,
                 name = target.text.value;
    
         // Insert a task into the collection
-        Timers.insert({name: name});
-        //console.log(Timers.find({}).fetch());
-        // Clear form
+        Meteor.call('addTimer', name, (error, result) => {
+            console.log(result);
+        });
         target.text.value = '';
     },
   

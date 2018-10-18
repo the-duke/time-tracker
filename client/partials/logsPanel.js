@@ -4,6 +4,11 @@ import { Timers } from '../../imports/api/timers';
 
 import './logsPanel.html';
 
+Template.logsPanel.onCreated(function bodyOnCreated() {
+  this.state = new ReactiveDict();
+  Meteor.subscribe('timerTotals');
+});
+
 Template.logsPanel.onRendered(function() {
     console.log('on rendered logsPanel');
     this.selectedTimer = new ReactiveVar();
@@ -12,17 +17,18 @@ Template.logsPanel.onRendered(function() {
 
     this.totalTimes = new ReactiveVar("Waiting for response from server...");
     //this.updateTotalTimes = () => {
-        Meteor.call('getTotalTimeByFilter', buildLogFilter(), (error, result) => {
+        /*Meteor.call('getTotalTimeByFilter', buildLogFilter(), (error, result) => {
             if(error) {
                 console.log(error);
             } else {
                 console.log(result);
                 this.totalTime.set(result);
             }
-        });
+        });*/
     //};
     //this.updateTotalTimes();
 });
+
 
 const buildLogFilter = () => {
     const selectedTimer = Template.instance().selectedTimer,
