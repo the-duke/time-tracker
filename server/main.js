@@ -225,7 +225,7 @@ Meteor.publish('filterTimerTotals', function (filter) {
             time: {
               hours: hours,
               minutes: minutes,
-              seconds: result.seconds
+              seconds: seconds
             }
           });
         } else {
@@ -235,7 +235,7 @@ Meteor.publish('filterTimerTotals', function (filter) {
             time: {
               hours: hours,
               minutes: minutes,
-              seconds: result.seconds
+              seconds: seconds
             }
           });
         }

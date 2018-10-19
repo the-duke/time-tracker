@@ -80,6 +80,17 @@ Template.logsPanel.helpers({
 
     timerTotals () {
         return TimerTotals.find();
+    },
+
+    formatTotalTime () {
+        if (typeof this.time !== 'object') {
+            return '00:00:00';
+        }
+        return [
+            this.time.hours.pad(2),
+            this.time.minutes.pad(2),
+            this.time.seconds.pad(2)
+        ].join(':');
     }
     /* timerTotals () {
        

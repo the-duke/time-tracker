@@ -70,7 +70,7 @@
                 <div class="col s4">                
                     <ul> 
                         {{#each timerTotals}}
-                            <li>{{name}}: {{time.hours}}:{{time.minutes}}:{{time.minutes}} ({{seconds}})</li>
+                            <li>{{name}}: {{formatTotalTime}}</li>
                         {{/each}}
                     </ul>
                     <div class="col-md-12 center text-center">
