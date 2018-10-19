@@ -24,7 +24,7 @@ Template.timersPanel.events({
                 name = target.text.value;
    
         // Insert a task into the collection
-        Meteor.call('addTimer', name, (error, result) => {
+        Meteor.call('createTimer', name, (error, result) => {
             console.log(result);
         });
         target.text.value = '';
@@ -71,17 +71,13 @@ Template.timer.events({
         console.info('set timer', this.name, 'to running=', ! this.running);
 
         if (!this.running) {
-            Meteor.call('startTimer', this, (error, result) => {
-                console.log(result);
-            });
+            Meteor.call('startTimer', this);
         } else {
-            Meteor.call('stopTimer', this, (error, result) => {
-                console.log(result);
-            });
+            Meteor.call('stopTimer', this);
         }
     },
     'click .delete-btn'() {
-        Timers.remove(this._id);
+        Meteor.call('removeTimer', this);
     },
     'click .reset-btn'() {
         Meteor.call('resetTimer', this, (error, result) => {

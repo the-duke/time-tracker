@@ -1,21 +1,28 @@
 import { Template } from 'meteor/templating';
 import { Logs } from '../../imports/api/logs';
 import { Timers } from '../../imports/api/timers';
+import { TimerTotals } from '../../imports/api/timerTotals';
 
 import './logsPanel.html';
 
 Template.logsPanel.onCreated(function bodyOnCreated() {
-  this.state = new ReactiveDict();
-  Meteor.subscribe('timerTotals');
+  //this.state = new ReactiveDict();
+   this.selectedTimer = new ReactiveVar();
+   this.startTime = new ReactiveVar();
+   this.endTime = new ReactiveVar();
+
+    this.autorun(() => {
+        const handle = this.subscribe('filterTimerTotals', buildLogFilter() );
+       // const isReady = handle.ready();
+       // console.log(`Handle is ${isReady ? 'ready' : 'not ready'}`);
+    });
 });
 
 Template.logsPanel.onRendered(function() {
     console.log('on rendered logsPanel');
-    this.selectedTimer = new ReactiveVar();
-    this.startTime = new ReactiveVar();
-    this.endTime = new ReactiveVar();
+   
 
-    this.totalTimes = new ReactiveVar("Waiting for response from server...");
+    //this.totalTimes = new ReactiveVar("Waiting for response from server...");
     //this.updateTotalTimes = () => {
         /*Meteor.call('getTotalTimeByFilter', buildLogFilter(), (error, result) => {
             if(error) {
@@ -71,7 +78,10 @@ Template.logsPanel.helpers({
         return Logs.find(filter);
     },
 
-     timerTotals () {
+    timerTotals () {
+        return TimerTotals.find();
+    }
+    /* timerTotals () {
        
         const totalTimes = Template.instance().totalTime.get();
         console.log('TotalTime helper called', typeof results);
@@ -87,7 +97,7 @@ Template.logsPanel.helpers({
                     };
                 });
         };
-    }
+    }*/
 });
 
 Template.logsPanel.events({

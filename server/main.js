@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { Timers } from '../imports/api/timers.js';
 import { Logs } from '../imports/api/logs.js';
+//import { TimerTotals } from '../imports/api/timerTotals.js';
 
 let config = {
   timerLimit: {
@@ -8,7 +9,11 @@ let config = {
     minutes: 10,
     seconds: 0
   }
-}
+};
+
+const isAdmin = (userId) => {
+    return true;
+};
 
 Meteor.startup(() => {
 
@@ -44,6 +49,10 @@ Meteor.startup(() => {
     console.log('use timerLimit settings.json', Meteor.settings.timerLimit);
     Object.assign(config.timerLimit, Meteor.settings.timerLimit);
   }
+
+
+//  TimerTotals.insert({name: 'karl', minutes: 12});
+//  TimerTotals.insert({name: 'egon', minutes: 12});
 
   const masterTimer = Meteor.setInterval(() => {
     masterTimerLoop();
@@ -85,10 +94,23 @@ const logCtrl = {
 };
 
 const timerCtrl = {
-  addTimer (timerName) {
+  createTimer (timerName) {
+      if (!isAdmin(this.userId)) {
+        return this.ready();
+      }
+
       console.log('add timer with name', timerName);
       Timers.insert({name: timerName});
-      return timerName;
+  },
+
+  removeTimer (timer) {
+      if (!isAdmin(this.userId)) {
+        return this.ready();
+      }
+
+      console.log('remove timer with id', timer.name);
+      Timers.remove(timer._id);
+      Logs.remove({timerId: timer._id});
   },
 
   startTimer (timer) {
@@ -155,18 +177,17 @@ const timerCtrl = {
 };
 
 
-async function getTotalTimeByFilter(filter) {
+async function getTotalTimeByFilter (filter) {
   filter = filter || {};
-  
   const collection = Logs.rawCollection();
   const aggregate = Meteor.wrapAsync(collection.aggregate, collection);
   const group = {
-      _id: {timerId: '$timerId'}, 
-      totalMinites: { 
+      _id: '$timerId',
+      seconds: { 
         $sum: {
           $divide: [
             {$subtract: [ '$endTime', '$startTime' ]},
-            1000 * 60
+            1000
           ]
         }
     }
@@ -175,16 +196,87 @@ async function getTotalTimeByFilter(filter) {
   return await aggregate([
         { $match: filter },
         { $group: group }
-  ]);/*.toArray();/*.then( results => {
-      console.log("Result Report:", results);
-  });*/
-  
+  ]).toArray();
 };
 
 
-Meteor.publish('timerTotals', function timerTotalsPublication(filter) {
-    return Timers.find();
+Meteor.publish('filterTimerTotals', function (filter) {
+  console.log('filterTimerTotals', filter);
+//  Timers.find().forEach( (timer) => {
+//    this.removed("timerTotals", timer._id);
+//  });;
+  const runAggregation = (action) => {
+    getTotalTimeByFilter(filter).then( (results) => {
+      console.log('result', results);
+      results.forEach( (result) => {
+        console.log('added timerTotal', result);
+        const timer = Timers.findOne({ _id: result._id }),
+              timerName =  timer? timer.name : 'MISSING',
+              time = Math.floor(result.seconds);
+        
+        const hours = Math.floor(time / 3600),
+              minutes = Math.floor( (time - (hours * 3600)) / 60),
+              seconds = time - (minutes * 60) - (hours * 3600);
+
+        if (action === 'changed') {
+          this.changed("timerTotals", result._id, {
+            name: timerName,
+            seconds: result.seconds,
+            time: {
+              hours: hours,
+              minutes: minutes,
+              seconds: result.seconds
+            }
+          });
+        } else {
+          this.added("timerTotals", result._id, {
+            name: timerName,
+            seconds: result.seconds,            
+            time: {
+              hours: hours,
+              minutes: minutes,
+              seconds: result.seconds
+            }
+          });
+        }
+      })
+    });
+  };
+
+  // Track any changes on the collection we are going to use for aggregation
+  const query = Logs.find(filter);
+  let initializing = true;
+
+  const handle = query.observeChanges({
+    added: (id) => {
+      // observeChanges only returns after the initial `added` callbacks
+      // have run. Until then, we don't want to send a lot of
+      // `self.changed()` messages - hence tracking the
+      // `initializing` state.
+      if (!initializing) {
+        runAggregation('changed');
+      }
+    },
+    removed: (id) => {
+      runAggregation('changed');
+    },
+    changed: (id) => {
+      runAggregation('changed');
+    },
+    error: (err)=> {
+      throw new Meteor.Error('Uh oh! something went wrong!', err.message);
+    }
   });
+
+  // Instead, we'll send one `self.added()` message right after
+  // observeChanges has returned, and mark the subscription as
+  // ready.
+  initializing = false;
+  // Run the aggregation initially to add some data to our aggregation collection
+  runAggregation();
+
+  this.ready();
+});
 
 
 Meteor.methods(timerCtrl);  
