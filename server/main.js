@@ -8,7 +8,8 @@ let config = {
     hours: 0,
     minutes: 10,
     seconds: 0
-  }
+  },
+  logPageSize: 30
 };
 
 const isAdmin = (userId) => {
@@ -16,11 +17,13 @@ const isAdmin = (userId) => {
 };
 
 Meteor.startup(() => {
+  if (!Meteor.settings.public.recordsPerPage) {
+    Meteor.settings.public['recordsPerPage'] = 10;
+  }
 
-  let removeAllUsers = Meteor.settings.removeAllUsers,
-      defaultUsers = Meteor.settings.defaultUsers;
+  let  defaultUsers = Meteor.settings.defaultUsers || [];
 
-  if (removeAllUsers) {
+  if (Meteor.settings.removeAllUsers) {
     console.log('remove all users on app start');
     Meteor.users.rawCollection().drop();
   }
@@ -251,7 +254,7 @@ Meteor.publish('filterTimerTotals', function (filter) {
     added: (id) => {
       // observeChanges only returns after the initial `added` callbacks
       // have run. Until then, we don't want to send a lot of
-      // `self.changed()` messages - hence tracking the
+      // `changed()` messages - hence tracking the
       // `initializing` state.
       if (!initializing) {
         runAggregation('changed');
@@ -278,5 +281,31 @@ Meteor.publish('filterTimerTotals', function (filter) {
   this.ready();
 });
 
+//https://experimentingwithcode.com/paging-and-sorting-part-1/
+Meteor.publish('filteredLogs', function (filter, offset, limit) {
+  filter = filter || {};
+  offset = offset || 0;
+  limit = limit || parseInt(Meteor.settings.public.recordsPerPage) || 10;
+
+  console.log('filteredLogs called', filter, offset, limit);
+
+
+  Counts.publish(this, 'filteredLogCount', Logs.find(filter), {
+    noReady: true
+  });
+
+  return Logs.find(filter, {
+    limit: limit,
+    skip: offset
+  })
+  
+});
+
+// Meteor.publish('filteredLogs', function (filter, offset, limit) {
+//   offset = offset || 0;
+//   limit = limit || parseInt(Meteor.settings.public.recordsPerPage);
+
+  
+// });
 
 Meteor.methods(timerCtrl);  

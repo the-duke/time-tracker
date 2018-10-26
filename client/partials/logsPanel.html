@@ -61,7 +61,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{#each logs}}
+                            {{#each filteredLogs}}
                                 {{> logEntry}}
                             {{/each}}
                         </tbody>
@@ -73,10 +73,21 @@
                             <li>{{name}}: {{formatTotalTime}}</li>
                         {{/each}}
                     </ul>
-                    <div class="col-md-12 center text-center">
-                        <span class="left" id="total_reg"></span>
-                        <ul class="pagination pager" id="myPager"></ul>
-                    </div>
+                    total filter result: {{filteredLogCount}}
+                    <nav>
+                        <ul class="pager">
+                            <li class="{{prevPageClass}}">
+                                <a id="prevPage" href="{{prevPage}}">
+                                <span aria-hidden="true">&larr;</span> Previous
+                                </a>
+                            </li>
+                            <li class="{{nextPageClass}}">
+                                <a id="nextPage" href="{{nextPage}}">
+                                Next <span aria-hidden="true">&rarr;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </main>

@@ -1,7 +1,10 @@
 import { Template } from 'meteor/templating';
+import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { Logs } from '../../imports/api/logs';
 import { Timers } from '../../imports/api/timers';
 import { TimerTotals } from '../../imports/api/timerTotals';
+
+
 
 import './logsPanel.html';
 
@@ -12,7 +15,11 @@ Template.logsPanel.onCreated(function bodyOnCreated() {
    this.endTime = new ReactiveVar();
 
     this.autorun(() => {
-        const handle = this.subscribe('filterTimerTotals', buildLogFilter() );
+        var offset = (currentPage() - 1) * Meteor.settings.public.recordsPerPage;
+
+        const filterTimerTotalsHandle = this.subscribe('filterTimerTotals', buildLogFilter() ),
+              filteredLogs =  this.subscribe('filteredLogs', buildLogFilter(), offset);
+
        // const isReady = handle.ready();
        // console.log(`Handle is ${isReady ? 'ready' : 'not ready'}`);
     });
@@ -59,6 +66,16 @@ const buildLogFilter = () => {
     return filter;
 };
 
+const hasMorePages = () => {
+    var currentPage = parseInt(FlowRouter.current().params.page) || 1;
+    var filteredLogCount = Counts.get('filteredLogCount');
+    return currentPage * parseInt(Meteor.settings.public.recordsPerPage) < filteredLogCount;
+}
+
+const currentPage = () => {
+    return parseInt(FlowRouter.current().params.page) || 1;
+}
+
 Template.logsPanel.helpers({
     allTimers () {
         var timer = Template.instance().selectedTimer.get();
@@ -78,6 +95,16 @@ Template.logsPanel.helpers({
         return Logs.find(filter);
     },
 
+    filteredLogCount () {
+        return Counts.get('filteredLogCount');
+    },
+
+    filteredLogs () {
+        //let filter = buildLogFilter();
+        console.log('filteredLogs called');
+        return Logs.find();
+    },
+
     timerTotals () {
         return TimerTotals.find();
     },
@@ -91,6 +118,12 @@ Template.logsPanel.helpers({
             this.time.minutes.pad(2),
             this.time.seconds.pad(2)
         ].join(':');
+    },
+
+    nextPage: function() {
+        // var currentPage = parseInt(Router.current().params.page) || 1;
+        // var nextPage = hasMorePages() ? currentPage + 1 : currentPage;
+        // return Router.routes.logsPanel.path({page: nextPage});
     }
     /* timerTotals () {
        
