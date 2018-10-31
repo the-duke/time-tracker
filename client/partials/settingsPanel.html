@@ -1,0 +1,17 @@
+
+<template name="settingsPanel">
+    {{#if currentUser}}
+    Global Settings
+    {{/if}}
+    <main class="stettings-container">
+        {{#each settings}}
+            {{> settingRecord}}
+        {{/each}}
+    </main>
+</template>
+
+<template name="settingRecord">
+    <div class="setting-row">
+
+    </div>
+</template>

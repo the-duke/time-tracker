@@ -9,39 +9,26 @@ import { TimerTotals } from '../../imports/api/timerTotals';
 import './logsPanel.html';
 
 Template.logsPanel.onCreated(function bodyOnCreated() {
-  //this.state = new ReactiveDict();
+   //this.state = new ReactiveDict();
    this.selectedTimer = new ReactiveVar();
    this.startTime = new ReactiveVar();
    this.endTime = new ReactiveVar();
 
     this.autorun(() => {
         var offset = (currentPage() - 1) * Meteor.settings.public.recordsPerPage;
-
-        const filterTimerTotalsHandle = this.subscribe('filterTimerTotals', buildLogFilter() ),
-              filteredLogs =  this.subscribe('filteredLogs', buildLogFilter(), offset);
+        console.info('current Paging offset', offset);
+        const timersHandle = this.subscribe('timers'),
+              filterTimerTotalsHandle = this.subscribe('filterTimerTotals', buildLogFilter() ),
+              filteredLogsHandle =  this.subscribe('filteredLogs', buildLogFilter(), offset);
 
        // const isReady = handle.ready();
        // console.log(`Handle is ${isReady ? 'ready' : 'not ready'}`);
     });
 });
 
-Template.logsPanel.onRendered(function() {
-    console.log('on rendered logsPanel');
-   
-
-    //this.totalTimes = new ReactiveVar("Waiting for response from server...");
-    //this.updateTotalTimes = () => {
-        /*Meteor.call('getTotalTimeByFilter', buildLogFilter(), (error, result) => {
-            if(error) {
-                console.log(error);
-            } else {
-                console.log(result);
-                this.totalTime.set(result);
-            }
-        });*/
-    //};
-    //this.updateTotalTimes();
-});
+// Template.logsPanel.onRendered(function() {
+//     console.log('on rendered logsPanel');
+// });
 
 
 const buildLogFilter = () => {
@@ -72,36 +59,34 @@ const hasMorePages = () => {
     return currentPage * parseInt(Meteor.settings.public.recordsPerPage) < filteredLogCount;
 }
 
+const pageCount = () => {
+    var filteredLogCount = Counts.get('filteredLogCount');
+    return filteredLogCount? Math.ceil(filteredLogCount / parseInt(Meteor.settings.public.recordsPerPage)) : 0;
+}
+
 const currentPage = () => {
     return parseInt(FlowRouter.current().params.page) || 1;
 }
 
 Template.logsPanel.helpers({
-    allTimers () {
-        var timer = Template.instance().selectedTimer.get();
-        return Logs.find(timer ? {timerId: timer._id} : {});
-    },
+    // allTimers () {
+    //     var timer = Template.instance().selectedTimer.get();
+    //     return Logs.find(timer ? {timerId: timer._id} : {});
+    // },
     timers() {
-        //return Timers.find({}, { sort: { createdAt: 1 } });
         return Timers.find({});
     },
-    initialize () {
-        console.log('initialize');
-        $('select').material_select();
-    },
-    logs () {
-        let filter = buildLogFilter();
-        console.log('change Log query filter to', filter);
-        return Logs.find(filter);
-    },
+    // logs () {
+    //     let filter = buildLogFilter();
+    //     console.log('change Log query filter to', filter);
+    //     return Logs.find(filter);
+    // },
 
     filteredLogCount () {
         return Counts.get('filteredLogCount');
     },
 
     filteredLogs () {
-        //let filter = buildLogFilter();
-        console.log('filteredLogs called');
         return Logs.find();
     },
 
@@ -120,38 +105,30 @@ Template.logsPanel.helpers({
         ].join(':');
     },
 
+    paginationInfo: function () {
+        return currentPage() + ' / ' + pageCount()
+    },
+
+    prevPage: function() {
+        return '#';
+        // const previousPage = currentPage() === 1 ? 1 : currentPage() - 1;
+        // //return FlowRouter.routes.logs.path({page: previousPage});
+        // FlowRouter.go('logs', { page: previousPage });
+    },
+
     nextPage: function() {
-        // var currentPage = parseInt(Router.current().params.page) || 1;
-        // var nextPage = hasMorePages() ? currentPage + 1 : currentPage;
-        // return Router.routes.logsPanel.path({page: nextPage});
+        return '#';
     }
-    /* timerTotals () {
-       
-        const totalTimes = Template.instance().totalTime.get();
-        console.log('TotalTime helper called', typeof results);
-        if (typeof totalTimes === 'object') {
-            console.log('compute timerTotals', results);
-            return totalTimes.map( (result) => {
-                    const timerNames = Timers.find({_id: result._id.timerId}).map( (doc) => {
-                        return doc.name;
-                    });
-                    return {
-                        name: timerNames[0],
-                        time: result.totalMinites
-                    };
-                });
-        };
-    }*/
 });
 
 Template.logsPanel.events({
-    'change #timerFilter' (event, target){
+    'change #timerFilter' (event, target) {
         var timerFilter = $(event.target)[0];
         console.log('change selected Timer', timerFilter.value);
         target.selectedTimer.set(timerFilter.value);
     },
 
-    'change #startDateFilter' (event, target){
+    'change #startDateFilter' (event, target) {
         var dateFilter = $(event.target);
             date = new Date(dateFilter.val());
 
@@ -159,7 +136,7 @@ Template.logsPanel.events({
         target.startTime.set(date);
     },
     
-    'change #endDateFilter' (event, target){
+    'change #endDateFilter' (event, target) {
         var dateFilter = $(event.target);
             date = new Date(dateFilter.val());
 
@@ -167,18 +144,43 @@ Template.logsPanel.events({
         target.endTime.set(date);
     },
   
-    'click #foo, click .stop-all-timers-btn'(event) {
-        console.info('stop all timers')
-        Timers.find({running:true}).fetch().forEach(timer => {
-            Meteor.call('stopTimer', this, (error, result) => {
-                console.log(result);
-            });
-        });
+    'click #prevPage' (event) {
+        console.info('go to prev page');
+        const previousPage = currentPage() === 1 ? 1 : currentPage() - 1;
+        FlowRouter.go('logs', { page: previousPage });
+    },
+
+    'click #nextPage' (event) {
+        console.info('go to next page');
+        const nextPage = hasMorePages() ? currentPage() + 1 : currentPage();
+        FlowRouter.go('logs', { page: nextPage });
     }
 });
 
 Template.logEntry.onRendered(function() {
     console.log('on rendered logEntry');
+    // initialize materializecss' form elements
+    $('select').material_select();
+    $('#startDateFilter').pickadate({
+        //format: 'dd.mm.yyyy',
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 15, // Creates a dropdown of 15 years to control year
+        onStart: function() {
+            var date = new Date();
+            this.set('select', [date.getFullYear(), date.getMonth(), 1 /*date.getDate()*/]);
+        }
+        // closeOnSelect: false // Close upon selecting a date,
+    });
+    $('#endDateFilter').pickadate({
+        //format: 'dd.mm.yyyy',
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 15, // Creates a dropdown of 15 years to control year
+        onStart: function() {
+            var date = new Date();
+            this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
+        }
+        // closeOnSelect: false // Close upon selecting a date,
+    });
 });
 
 Template.logEntry.helpers({

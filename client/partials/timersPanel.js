@@ -3,6 +3,13 @@ import { Timers } from '../../imports/api/timers.js';
 
 import './timersPanel.html';
 
+
+Template.timersPanel.onCreated(function bodyOnCreated() {
+    this.autorun(() => {
+        const timersHandle = this.subscribe('timers');
+    });
+  });
+
 Template.timersPanel.onRendered(function() {
     console.log('on rendered timersPanel');
     $('.modal').modal();

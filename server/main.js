@@ -176,9 +176,7 @@ const timerCtrl = {
       }
     });
   }
-
 };
-
 
 async function getTotalTimeByFilter (filter) {
   filter = filter || {};
@@ -201,10 +199,16 @@ async function getTotalTimeByFilter (filter) {
         { $group: group }
   ]).toArray();
 };
+Meteor.methods(timerCtrl); 
+
+Meteor.publish('timers', function (filter) {
+  console.log('start publish timers');
+  return Timers.find();
+});
 
 
 Meteor.publish('filterTimerTotals', function (filter) {
-  console.log('filterTimerTotals', filter);
+  console.log('start publish filterTimerTotals', filter);
 //  Timers.find().forEach( (timer) => {
 //    this.removed("timerTotals", timer._id);
 //  });;
@@ -289,7 +293,6 @@ Meteor.publish('filteredLogs', function (filter, offset, limit) {
 
   console.log('filteredLogs called', filter, offset, limit);
 
-
   Counts.publish(this, 'filteredLogCount', Logs.find(filter), {
     noReady: true
   });
@@ -300,12 +303,3 @@ Meteor.publish('filteredLogs', function (filter, offset, limit) {
   })
   
 });
-
-// Meteor.publish('filteredLogs', function (filter, offset, limit) {
-//   offset = offset || 0;
-//   limit = limit || parseInt(Meteor.settings.public.recordsPerPage);
-
-  
-// });
-
-Meteor.methods(timerCtrl);  

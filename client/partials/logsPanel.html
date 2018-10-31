@@ -4,7 +4,7 @@
         <div class="filter-form grey lighten-3">
             <div class="row">
                 <div class="input-field col s4">
-                    <select class=" timerFilter" id="timerFilter">
+                    <select class="timerFilter" id="timerFilter">
                         <option value="" disabled selected>select timer</option>
                         <option value="">all</option>
                         {{#each timers}}
@@ -22,29 +22,6 @@
                     <label for="endDateFilter">End Date</label>
                 </div>
             </div>
-            <script>
-                this.$('select').material_select();
-                this.$('#startDateFilter').pickadate({
-                    //format: 'dd.mm.yyyy',
-                    selectMonths: true, // Creates a dropdown to control month
-                    selectYears: 15, // Creates a dropdown of 15 years to control year
-                    onStart: function() {
-                        var date = new Date();
-                        this.set('select', [date.getFullYear(), date.getMonth(), 1 /*date.getDate()*/]);
-                    }
-                    // closeOnSelect: false // Close upon selecting a date,
-                });
-                this.$('#endDateFilter').pickadate({
-                    //format: 'dd.mm.yyyy',
-                    selectMonths: true, // Creates a dropdown to control month
-                    selectYears: 15, // Creates a dropdown of 15 years to control year
-                    onStart: function() {
-                        var date = new Date();
-                        this.set('select', [date.getFullYear(), date.getMonth(), date.getDate()]);
-                    }
-                    // closeOnSelect: false // Close upon selecting a date,
-                });
-            </script>
         </div>
         <main class="log-entry-container"> 
             <div class="row">
@@ -74,6 +51,7 @@
                         {{/each}}
                     </ul>
                     total filter result: {{filteredLogCount}}
+                    <br/>
                     <nav>
                         <ul class="pager">
                             <li class="{{prevPageClass}}">
@@ -81,6 +59,7 @@
                                 <span aria-hidden="true">&larr;</span> Previous
                                 </a>
                             </li>
+                            <li>{{paginationInfo}}</li>
                             <li class="{{nextPageClass}}">
                                 <a id="nextPage" href="{{nextPage}}">
                                 Next <span aria-hidden="true">&rarr;</span>

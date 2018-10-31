@@ -9,12 +9,15 @@
                 <ul id="nav-mobile" class="right hide-on-med-and-down">
                     {{> loginButtons align="right"}}
                     {{#if currentUser}}
-                        {{#if isActiveRoute 'timers'}}
-                            <li><a href="/logs">Logs</a></li>
-                        {{/if}}
-                        {{#if isActiveRoute 'logs'}}
-                            <li><a href="/">Timers</a></li>
-                        {{/if}}
+                        <li class="{{#if isActiveRoute 'timers'}}active{{/if}}">
+                            <a href="/">Timers</a>
+                        </li>
+                        <li class="{{#if isActiveRoute 'logs'}}active{{/if}}">
+                            <a href="/logs/">Logs</a>
+                        </li>
+                        <li class="{{#if isActiveRoute 'settings'}}active{{/if}}">
+                            <a href="/settings/">Settings</a>
+                        </li>
                     {{/if}}
                     <li><a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a></li>
                 </ul>
