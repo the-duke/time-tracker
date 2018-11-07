@@ -4,25 +4,23 @@ import { Logs } from '../../imports/api/logs';
 import { Timers } from '../../imports/api/timers';
 import { TimerTotals } from '../../imports/api/timerTotals';
 
-
-
 import './logsPanel.html';
 
 Template.logsPanel.onCreated(function bodyOnCreated() {
-   //this.state = new ReactiveDict();
-   this.selectedTimer = new ReactiveVar();
-   this.startTime = new ReactiveVar();
-   this.endTime = new ReactiveVar();
+    //this.state = new ReactiveDict();
+    this.selectedTimer = new ReactiveVar();
+    this.startTime = new ReactiveVar();
+    this.endTime = new ReactiveVar();
+
+    this.currentPage = new ReactiveVar();
+    this.currentPage.set(1);
 
     this.autorun(() => {
-        var offset = (currentPage() - 1) * Meteor.settings.public.recordsPerPage;
+        var offset = (this.currentPage.get() - 1) * Meteor.settings.public.recordsPerPage;
         console.info('current Paging offset', offset);
         const timersHandle = this.subscribe('timers'),
               filterTimerTotalsHandle = this.subscribe('filterTimerTotals', buildLogFilter() ),
               filteredLogsHandle =  this.subscribe('filteredLogs', buildLogFilter(), offset);
-
-       // const isReady = handle.ready();
-       // console.log(`Handle is ${isReady ? 'ready' : 'not ready'}`);
     });
 });
 
@@ -54,8 +52,9 @@ const buildLogFilter = () => {
 };
 
 const hasMorePages = () => {
-    var currentPage = parseInt(FlowRouter.current().params.page) || 1;
-    var filteredLogCount = Counts.get('filteredLogCount');
+    //var currentPage = parseInt(FlowRouter.current().params.page) || 1;
+    const currentPage = Template.instance().currentPage.get();
+    const filteredLogCount = Counts.get('filteredLogCount');
     return currentPage * parseInt(Meteor.settings.public.recordsPerPage) < filteredLogCount;
 }
 
@@ -64,23 +63,14 @@ const pageCount = () => {
     return filteredLogCount? Math.ceil(filteredLogCount / parseInt(Meteor.settings.public.recordsPerPage)) : 0;
 }
 
-const currentPage = () => {
-    return parseInt(FlowRouter.current().params.page) || 1;
+const resetPagination = () => {
+    Template.instance().currentPage.set(1);
 }
 
 Template.logsPanel.helpers({
-    // allTimers () {
-    //     var timer = Template.instance().selectedTimer.get();
-    //     return Logs.find(timer ? {timerId: timer._id} : {});
-    // },
     timers() {
         return Timers.find({});
     },
-    // logs () {
-    //     let filter = buildLogFilter();
-    //     console.log('change Log query filter to', filter);
-    //     return Logs.find(filter);
-    // },
 
     filteredLogCount () {
         return Counts.get('filteredLogCount');
@@ -106,54 +96,46 @@ Template.logsPanel.helpers({
     },
 
     paginationInfo: function () {
-        return currentPage() + ' / ' + pageCount()
-    },
-
-    prevPage: function() {
-        return '#';
-        // const previousPage = currentPage() === 1 ? 1 : currentPage() - 1;
-        // //return FlowRouter.routes.logs.path({page: previousPage});
-        // FlowRouter.go('logs', { page: previousPage });
-    },
-
-    nextPage: function() {
-        return '#';
+        return Template.instance().currentPage.get() + ' / ' + pageCount()
     }
 });
 
 Template.logsPanel.events({
     'change #timerFilter' (event, target) {
-        var timerFilter = $(event.target)[0];
-        console.log('change selected Timer', timerFilter.value);
+        const timerFilter = $(event.target)[0];
+
         target.selectedTimer.set(timerFilter.value);
+        resetPagination();
     },
 
     'change #startDateFilter' (event, target) {
-        var dateFilter = $(event.target);
-            date = new Date(dateFilter.val());
+        const dateFilter = $(event.target);
+              date = new Date(dateFilter.val());
 
-        console.log('changed startTime to', date);
         target.startTime.set(date);
+        resetPagination();
     },
     
     'change #endDateFilter' (event, target) {
-        var dateFilter = $(event.target);
-            date = new Date(dateFilter.val());
+        const dateFilter = $(event.target);
+              date = new Date(dateFilter.val());
 
-        console.log('changed endTime to', date);
         target.endTime.set(date);
+        resetPagination();
     },
   
     'click #prevPage' (event) {
         console.info('go to prev page');
-        const previousPage = currentPage() === 1 ? 1 : currentPage() - 1;
-        FlowRouter.go('logs', { page: previousPage });
+        const previousPage = Template.instance().currentPage.get() === 1 ? 1 : Template.instance().currentPage.get() - 1;
+        Template.instance().currentPage.set(previousPage)
+        //FlowRouter.go('logs', { page: previousPage });
     },
 
     'click #nextPage' (event) {
         console.info('go to next page');
-        const nextPage = hasMorePages() ? currentPage() + 1 : currentPage();
-        FlowRouter.go('logs', { page: nextPage });
+        const nextPage = hasMorePages() ? Template.instance().currentPage.get() + 1 : Template.instance().currentPage.get();
+        Template.instance().currentPage.set(nextPage);
+        //FlowRouter.go('logs', { page: nextPage });
     }
 });
 

@@ -1,0 +1,58 @@
+div.logsPanel {
+  height: 100vh;
+  width: 100vh;
+  display: flex;
+  flex-direction: column;
+  
+}
+
+
+.filter-form {
+    height: 80px;
+}
+
+.log-data-container {
+    //height: calc((100vh) - 80px);
+    //height: ~"calc(100vh - 80px)";
+
+    log-table-wrapper {
+      table.log-data {
+        width: 100%;
+        height: ~"calc(100vh - 64px)";
+        tr {
+          width: 100%;
+        }
+      
+        thead, tbody {
+          display:block;
+        }
+        
+        tbody {
+          overflow-y: scroll;
+          width: 100%;
+          height: 600px;
+        }
+      }
+
+      div.log-pager {
+        width: 100%;
+        height: 64px;
+      }
+    }
+
+}
+
+
+
+
+// @media screen and (min-width: 60em) {
+//   .timer-card {
+//       flex: 0 1 calc(50% - 1em);
+//   }
+// }
+
+// @media screen and (min-width: 80em) {
+//   .timer-card {
+//       flex: 0 1 calc(25% - 1em);
+//   }
+// }

@@ -1,6 +1,7 @@
 
 <template name="logsPanel">
     {{#if currentUser}}
+    <div class="logsPanel">
         <div class="filter-form grey lighten-3">
             <div class="row">
                 <div class="input-field col s4">
@@ -23,65 +24,54 @@
                 </div>
             </div>
         </div>
-        <main class="log-entry-container"> 
-            <div class="row">
-                <div class="col s8">
-                    <table id="log-data-table" class="striped log-data">
-                        <thead>
-                            <tr>
-                                <th>Timer</th>
-                                <th>User</th>
-                                <th>Start Time</th>
-                                <th>End Time</th>
-                                <th>Duration</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each filteredLogs}}
-                                {{> logEntry}}
-                            {{/each}}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="col s4">                
-                    <ul> 
-                        {{#each timerTotals}}
-                            <li>{{name}}: {{formatTotalTime}}</li>
+        <div class="log-data-container row"> 
+
+            <div class="log-table-wrapper col s8">
+                <table id="log-data-table" class="striped log-data">
+                    <thead>
+                        <tr>
+                            <th>Timer</th>
+                            <th>User</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Duration</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each filteredLogs}}
+                            {{> logEntry}}
                         {{/each}}
-                    </ul>
-                    total filter result: {{filteredLogCount}}
-                    <br/>
-                    <nav>
-                        <ul class="pager">
-                            <li class="{{prevPageClass}}">
-                                <a id="prevPage" href="{{prevPage}}">
-                                <span aria-hidden="true">&larr;</span> Previous
-                                </a>
-                            </li>
-                            <li>{{paginationInfo}}</li>
-                            <li class="{{nextPageClass}}">
-                                <a id="nextPage" href="{{nextPage}}">
-                                Next <span aria-hidden="true">&rarr;</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+                    </tbody>
+                </table>
             </div>
-        </main>
-        <script>
-            // this.$('#log-data-table').pageMe({
-            //     pagerSelector:'#myPager',
-            //     activeColor: 'blue',
-            //     prevText:'Anterior',
-            //     nextText:'Siguiente',
-            //     showPrevNext:true,
-            //     hidePageNumbers:false,
-            //     perPage:10
-            // });
-        </script>
-        {{initialize}}
+            <div class="total-timers-wrapper col s4">                
+                <ul> 
+                    {{#each timerTotals}}
+                        <li>{{name}}: {{formatTotalTime}}</li>
+                    {{/each}}
+                </ul>
+                total filter result: {{filteredLogCount}}
+                <br/>
+                <nav>
+                    <ul class="pager">
+                        <li class="{{prevPageClass}}">
+                            <a id="prevPage" href="#">
+                            <span aria-hidden="true">&larr;</span> Previous
+                            </a>
+                        </li>
+                        <li>{{paginationInfo}}</li>
+                        <li class="{{nextPageClass}}">
+                            <a id="nextPage" href="#">
+                            Next <span aria-hidden="true">&rarr;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            
+        </div>
+    </div>
     {{else}}
         <div>
             Please log in to access logs
