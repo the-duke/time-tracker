@@ -1,5 +1,5 @@
 import { Template } from 'meteor/templating';
-import { Timers } from '../../imports/api/timers.js';
+import { Settings } from '../../imports/api/settings.js';
 
 import './settingsPanel.html';
 

@@ -1,17 +1,22 @@
 @import (css) "/fonts/material-icons.css";
 
-@import "partials/timersPanel.less";
-@import "partials/logsPanel.less";
+//@import "partials/timersPanel.less";
+//@import "partials/logsPanel.less";
+
+html, body { 
+  height:100%;
+  width: 100%;
+  margin:0;
+  padding:0;
+  overflow: hidden;
+}
 
 body {
-  padding: 10px;
+  //padding: 10px;
   font-family: sans-serif;
 
   display: flex;
-  min-height: 100vh;
   flex-direction: column;
-
-  overflow: hidden;
 }
 
 .app-logo {
@@ -36,9 +41,12 @@ body {
 }
 
 main {
-  flex: 1 0 auto; 
+  flex: 1 1 auto; 
+  
+  display: flex;
+  align-items: stretch;
 }
 
 .page-footer {
-
+  height: 30px;
 }

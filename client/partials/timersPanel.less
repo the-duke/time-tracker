@@ -1,13 +1,28 @@
-.timer-card-container {
+.timersPanel {
+  width: 100%;
+
   display: flex;
-  flex-wrap: wrap;
-  list-style: none;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
 
-  margin: 0;
-  padding: 0;
+  .admin-timer-controller {
+    flex: initial;
+    //height 64px from nav style
+  }
 
-  overflow-y: auto; 
+  .timer-card-container {
+    flex: 1;
+
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    justify-content: space-between;
+
+    margin: 0;
+    padding: 0;
+
+    overflow-y: auto; 
+  }
 }
 
 .timer-card {

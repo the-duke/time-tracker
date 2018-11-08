@@ -1,29 +1,31 @@
 
 <template name="timersPanel">
-    {{#if currentUser}}
-    <nav class="grey lighten-3">
-        <ul class="adim-menu right">
-            <a href="#addTimerDialog" class="waves-effect waves-light btn modal-trigger"><i class="material-icons">add</i></a>
-            <a class="stop-all-timers-btn blue-grey darken-4 waves-effect waves-light btn"><i class="material-icons">stop</i></a>
-            <a class="reset-all-timers-btn blue waves-effect waves-light btn"><i class="material-icons">highlight_off</i></a>
-        </ul>
-    </nav>
-    {{/if}}
-    <main class="timer-card-container">
-        {{#each timers}}
-            {{> timer}}
-        {{/each}}
-    </main>
-    <!-- Modal Structure -->
-    <div id="addTimerDialog" class="modal">
-        <div class="modal-content">
-            <h4>Create Timers</h4>
-            <form class="new-timer">
-            <input type="text" name="text" placeholder="name for new timer and press enter"/>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+    <div class="timersPanel">
+        {{#if currentUser}}
+        <nav class="grey lighten-3">
+            <ul class="adim-menu right">
+                <a href="#addTimerDialog" class="waves-effect waves-light btn modal-trigger"><i class="material-icons">add</i></a>
+                <a class="stop-all-timers-btn blue-grey darken-4 waves-effect waves-light btn"><i class="material-icons">stop</i></a>
+                <a class="reset-all-timers-btn blue waves-effect waves-light btn"><i class="material-icons">highlight_off</i></a>
+            </ul>
+        </nav>
+        {{/if}}
+        <main class="timer-card-container">
+            {{#each timers}}
+                {{> timer}}
+            {{/each}}
+        </main>
+        <!-- Modal Structure -->
+        <div id="addTimerDialog" class="modal">
+            <div class="modal-content">
+                <h4>Create Timers</h4>
+                <form class="new-timer">
+                <input type="text" name="text" placeholder="name for new timer and press enter"/>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+            </div>
         </div>
     </div>
 </template>

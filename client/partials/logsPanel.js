@@ -76,6 +76,10 @@ Template.logsPanel.helpers({
         return Counts.get('filteredLogCount');
     },
 
+    paginationHasPages () {
+        return pageCount() > 1; 
+    },
+
     filteredLogs () {
         return Logs.find();
     },
@@ -96,7 +100,7 @@ Template.logsPanel.helpers({
     },
 
     paginationInfo: function () {
-        return Template.instance().currentPage.get() + ' / ' + pageCount()
+        return 'Page: ' + Template.instance().currentPage.get() + ' / ' + pageCount() + '     ( ' + Counts.get('filteredLogCount') + ' filter results )';
     }
 });
 

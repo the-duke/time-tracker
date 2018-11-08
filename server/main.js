@@ -18,7 +18,7 @@ const isAdmin = (userId) => {
 
 Meteor.startup(() => {
   if (!Meteor.settings.public.recordsPerPage) {
-    Meteor.settings.public['recordsPerPage'] = 10;
+    Meteor.settings.public['recordsPerPage'] = 20;
   }
 
   let  defaultUsers = Meteor.settings.defaultUsers || [];

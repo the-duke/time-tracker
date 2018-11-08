@@ -1,13 +1,29 @@
 
 <template name="settingsPanel">
     {{#if currentUser}}
-    Global Settings
+        <div class="settingsPanel">
+            <table id="settings-table" class="striped">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {{#each settings}}
+                    <tr>
+                        <td>{{name}}</td>
+                        <td> {{value}}</td>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
+        </div>
+    {{else}}
+        <div>
+            Please log in to access logs
+        </div>
     {{/if}}
-    <main class="stettings-container">
-        {{#each settings}}
-            {{> settingRecord}}
-        {{/each}}
-    </main>
 </template>
 
 <template name="settingRecord">

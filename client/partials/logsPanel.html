@@ -24,50 +24,68 @@
                 </div>
             </div>
         </div>
-        <div class="log-data-container row"> 
-
-            <div class="log-table-wrapper col s8">
-                <table id="log-data-table" class="striped log-data">
-                    <thead>
-                        <tr>
-                            <th>Timer</th>
-                            <th>User</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th>Duration</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{#each filteredLogs}}
-                            {{> logEntry}}
-                        {{/each}}
-                    </tbody>
-                </table>
-            </div>
-            <div class="total-timers-wrapper col s4">                
-                <ul> 
-                    {{#each timerTotals}}
-                        <li>{{name}}: {{formatTotalTime}}</li>
-                    {{/each}}
-                </ul>
-                total filter result: {{filteredLogCount}}
-                <br/>
-                <nav>
+        <div class="log-data-container"> 
+            
+            <div class="log-grid-wrapper grey lighten-4">
+            {{#if filteredLogCount}}
+                <div class="log-table-wrapper">
+                    <table id="log-data-table" class="striped">
+                        <thead>
+                            <tr>
+                                <th>Timer</th>
+                                <th>User</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Duration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each filteredLogs}}
+                                {{> logEntry}}
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                {{#if paginationHasPages}}
+                <nav class="log-pager">
                     <ul class="pager">
-                        <li class="{{prevPageClass}}">
+                        <li class="prev-page">
                             <a id="prevPage" href="#">
-                            <span aria-hidden="true">&larr;</span> Previous
+                                <span aria-hidden="true">&larr;</span> Previous
                             </a>
                         </li>
-                        <li>{{paginationInfo}}</li>
-                        <li class="{{nextPageClass}}">
+                        <li class="pagination-info">{{paginationInfo}}</li>
+                        <li class="next-page">
                             <a id="nextPage" href="#">
-                            Next <span aria-hidden="true">&rarr;</span>
+                                Next <span aria-hidden="true">&rarr;</span>
                             </a>
                         </li>
                     </ul>
                 </nav>
+                {{/if}}
+            {{else}}
+                <div class="not-results-info">No log-entries found for current filter criteria</div>
+            {{/if}}
+            </div>
+
+            <div class="total-timers-wrapper grey lighten-3">                
+                    <table id="timer-totals-table" class="striped">
+                        <thead>
+                            <tr>
+                                <th>Timer</th>
+                                <th>Total Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {{#each timerTotals}}
+                            <tr>
+                                <td>{{name}}</td>
+                                <td> {{formatTotalTime}}</td>
+                            </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
             </div>
             
         </div>
