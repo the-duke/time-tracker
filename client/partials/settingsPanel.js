@@ -6,7 +6,7 @@ import './settingsPanel.html';
 
 Template.settingsPanel.onCreated(function bodyOnCreated() {
     this.autorun(() => {
-        const timersHandle = this.subscribe('timers');
+        const settingsHandle = this.subscribe('settings');
     });
   });
 
@@ -17,7 +17,7 @@ Template.settingsPanel.onRendered(function() {
 Template.settingsPanel.helpers({
     settings() {
       //return Timers.find({}, { sort: { createdAt: 1 } });
-      return Timers.find({});
+      return Settings.find({});
     },
 });
 

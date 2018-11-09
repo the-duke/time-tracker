@@ -16,6 +16,7 @@ Template.logsPanel.onCreated(function bodyOnCreated() {
     this.currentPage.set(1);
 
     this.autorun(() => {
+        console.info(this.currentPage.get(), Meteor.settings.public);
         var offset = (this.currentPage.get() - 1) * Meteor.settings.public.recordsPerPage;
         console.info('current Paging offset', offset);
         const timersHandle = this.subscribe('timers'),
@@ -73,6 +74,7 @@ Template.logsPanel.helpers({
     },
 
     filteredLogCount () {
+        console.info('filteredLogCount', Counts.get('filteredLogCount'));
         return Counts.get('filteredLogCount');
     },
 

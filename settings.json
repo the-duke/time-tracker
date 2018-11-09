@@ -3,9 +3,13 @@
         {"name":"admin", "email":"admin@example.com", "password": "admin", "roles":["admin"]},
         {"name":"manager", "email":"manager@example.com", "password": "manager", "roles":["manage-users"]}
     ],
-    "timerLimit": {
-        "hours": 0,
-        "minutes": 10,
-        "seconds": 0
-   }
+    "public":{
+        "timerLimitEnable": true,
+        "timerLimitTime": {
+            "hours": 0,
+            "minutes": 10,
+            "seconds": 0
+       },
+       "recordsPerPage": 20
+    }
 }

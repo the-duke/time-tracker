@@ -1,59 +1,14 @@
 import { Meteor } from 'meteor/meteor';
 import { Timers } from '../imports/api/timers.js';
 import { Logs } from '../imports/api/logs.js';
-//import { TimerTotals } from '../imports/api/timerTotals.js';
 
-let config = {
-  timerLimit: {
-    hours: 0,
-    minutes: 10,
-    seconds: 0
-  },
-  logPageSize: 30
-};
+import './settings.js';
 
 const isAdmin = (userId) => {
     return true;
 };
 
 Meteor.startup(() => {
-  if (!Meteor.settings.public.recordsPerPage) {
-    Meteor.settings.public['recordsPerPage'] = 20;
-  }
-
-  let  defaultUsers = Meteor.settings.defaultUsers || [];
-
-  if (Meteor.settings.removeAllUsers) {
-    console.log('remove all users on app start');
-    Meteor.users.rawCollection().drop();
-  }
-  _.each(defaultUsers, function (user) {
-    const exsitingUser = Accounts.findUserByEmail(user.email);
-    if (exsitingUser) {
-      console.log('user exsits - skip user creation for default user:', user.name);
-    } else {
-      console.log('add default user from settings.json', user.name);
-      let id = Accounts.createUser({
-        username: user.name,
-        email: user.email,
-        password: user.password,
-        profile: { name: user.name }
-      });
-      if (user.roles.length > 0) {
-        // Need _id of existing user record so this call must come
-        // after `Accounts.createUser` or `Accounts.onCreate`
-        //Roles.addUsersToRoles(id, user.roles, 'default-group');
-      }
-
-    }
-  });
-
-  if (Meteor.settings.timerLimit) {
-    console.log('use timerLimit settings.json', Meteor.settings.timerLimit);
-    Object.assign(config.timerLimit, Meteor.settings.timerLimit);
-  }
-
-
 //  TimerTotals.insert({name: 'karl', minutes: 12});
 //  TimerTotals.insert({name: 'egon', minutes: 12});
 
@@ -70,12 +25,12 @@ function masterTimerLoop () {
   runningTimers.forEach((timer) =>{
     //check if timer exceeded timer limit
     const limitDateObj = moment(timer.startedAt)
-                          .add(config.timerLimit.hours, 'h')
-                          .add(config.timerLimit.minutes, 'm')
-                          .add(config.timerLimit.seconds, 's')
+                          .add(Meteor.settings.public.timerLimitTime.hours, 'h')
+                          .add(Meteor.settings.public.timerLimitTime.minutes, 'm')
+                          .add(Meteor.settings.public.timerLimitTime.seconds, 's')
                           .toDate();          
-    if (limitDateObj.getTime() <= currentDateObj.getTime()) {
-      console.log('automatic stop for timer with name', timer.name, 'after timerLimit', config.timerLimit);
+    if ( Meteor.settings.public.timerLimitEnable && (limitDateObj.getTime() <= currentDateObj.getTime()) ) {
+      console.log('automatic stop for timer with name', timer.name, 'after timerLimitTime', Meteor.settings.public.timerLimitTime);
       //const duration =  moment.duration(moment(currentDateObj).diff(moment(timer.startedAt)));
       timerCtrl.stopTimer(timer);
     } else {
@@ -202,21 +157,19 @@ async function getTotalTimeByFilter (filter) {
 Meteor.methods(timerCtrl); 
 
 Meteor.publish('timers', function (filter) {
-  console.log('start publish timers');
   return Timers.find();
 });
 
-
 Meteor.publish('filterTimerTotals', function (filter) {
-  console.log('start publish filterTimerTotals', filter);
-//  Timers.find().forEach( (timer) => {
-//    this.removed("timerTotals", timer._id);
-//  });;
+  //console.log('start publish filterTimerTotals', filter);
+  //  Timers.find().forEach( (timer) => {
+  //    this.removed("timerTotals", timer._id);
+  //  });;
   const runAggregation = (action) => {
     getTotalTimeByFilter(filter).then( (results) => {
-      console.log('result', results);
+      //console.log('result', results);
       results.forEach( (result) => {
-        console.log('added timerTotal', result);
+        //console.log('added timerTotal', result);
         const timer = Timers.findOne({ _id: result._id }),
               timerName =  timer? timer.name : 'MISSING',
               time = Math.floor(result.seconds);
@@ -291,9 +244,10 @@ Meteor.publish('filteredLogs', function (filter, offset, limit) {
   offset = offset || 0;
   limit = limit || parseInt(Meteor.settings.public.recordsPerPage) || 10;
 
-  console.log('filteredLogs called', filter, offset, limit);
+  const totalFilterResult = Logs.find(filter);
+  console.log('filteredLogs called', filter, offset, limit, 'total result:', totalFilterResult.count());
 
-  Counts.publish(this, 'filteredLogCount', Logs.find(filter), {
+  Counts.publish(this, 'filteredLogCount', totalFilterResult, {
     noReady: true
   });
 
