@@ -10,9 +10,9 @@ let defaultSettings = {
         },
         recordsPerPage: 30
     }
-};
-Object.assign(Meteor.settings, defaultSettings);
-console.log(Meteor.settings);
+  };
+  Object.assign(Meteor.settings, defaultSettings);
+  console.log(Meteor.settings);
 
 if (Meteor.settings.removeAllUsers) {
     console.log('remove all users on app start');
