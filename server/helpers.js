@@ -1,7 +1,10 @@
 
 const ServerHelpers = {
     isAdmin (userId) {
-        return true;
+        if (Meteor.user().profile) {
+            return Meteor.user().profile.name === 'admin';
+        }
+        return false;
     }
 };
 
