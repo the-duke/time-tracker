@@ -1,12 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { Timers } from '../imports/api/timers.js';
 import { Logs } from '../imports/api/logs.js';
+import { Settings } from '../imports/api/settings.js';
+
+import { ServerHelpers } from './helpers.js';
 
 import './settings.js';
-
-const isAdmin = (userId) => {
-    return true;
-};
 
 Meteor.startup(() => {
 //  TimerTotals.insert({name: 'karl', minutes: 12});
@@ -20,17 +19,19 @@ Meteor.startup(() => {
 function masterTimerLoop () {
  
   const runningTimers = Timers.find({running: true}, { sort: { createdAt: -1 } }).fetch(),
+        timerLimitEnable = Settings.findOne({key: 'timerLimitEnable'}).value,
+        timerLimitTime = Settings.findOne({key: 'timerLimitTime'}).value,
         currentDateObj = new Date();
-
+        
   runningTimers.forEach((timer) =>{
     //check if timer exceeded timer limit
     const limitDateObj = moment(timer.startedAt)
-                          .add(Meteor.settings.public.timerLimitTime.hours, 'h')
-                          .add(Meteor.settings.public.timerLimitTime.minutes, 'm')
-                          .add(Meteor.settings.public.timerLimitTime.seconds, 's')
+                          .add(timerLimitTime.hours, 'h')
+                          .add(timerLimitTime.minutes, 'm')
+                          .add(timerLimitTime.seconds, 's')
                           .toDate();          
-    if ( Meteor.settings.public.timerLimitEnable && (limitDateObj.getTime() <= currentDateObj.getTime()) ) {
-      console.log('automatic stop for timer with name', timer.name, 'after timerLimitTime', Meteor.settings.public.timerLimitTime);
+    if ( timerLimitEnable && (limitDateObj.getTime() <= currentDateObj.getTime()) ) {
+      console.log('automatic stop for timer with name', timer.name, 'after timerLimitTime', timerLimitTime);
       //const duration =  moment.duration(moment(currentDateObj).diff(moment(timer.startedAt)));
       timerCtrl.stopTimer(timer);
     } else {
@@ -53,7 +54,7 @@ const logCtrl = {
 
 const timerCtrl = {
   createTimer (timerName) {
-      if (!isAdmin(this.userId)) {
+      if (!ServerHelpers.isAdmin(this.userId)) {
         return this.ready();
       }
 
@@ -62,7 +63,7 @@ const timerCtrl = {
   },
 
   removeTimer (timer) {
-      if (!isAdmin(this.userId)) {
+      if (!ServerHelpers.isAdmin(this.userId)) {
         return this.ready();
       }
 
@@ -161,10 +162,6 @@ Meteor.publish('timers', function (filter) {
 });
 
 Meteor.publish('filterTimerTotals', function (filter) {
-  //console.log('start publish filterTimerTotals', filter);
-  //  Timers.find().forEach( (timer) => {
-  //    this.removed("timerTotals", timer._id);
-  //  });;
   const runAggregation = (action) => {
     getTotalTimeByFilter(filter).then( (results) => {
       //console.log('result', results);
@@ -238,14 +235,13 @@ Meteor.publish('filterTimerTotals', function (filter) {
   this.ready();
 });
 
-//https://experimentingwithcode.com/paging-and-sorting-part-1/
 Meteor.publish('filteredLogs', function (filter, offset, limit) {
   filter = filter || {};
   offset = offset || 0;
-  limit = limit || parseInt(Meteor.settings.public.recordsPerPage) || 10;
+  limit = limit || Settings.findOne({key: 'recordsPerPage'}).value;
 
   const totalFilterResult = Logs.find(filter);
-  console.log('filteredLogs called', filter, offset, limit, 'total result:', totalFilterResult.count());
+  //console.log('filteredLogs called', filter, offset, limit, 'total result:', totalFilterResult.count());
 
   Counts.publish(this, 'filteredLogCount', totalFilterResult, {
     noReady: true
