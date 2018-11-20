@@ -1,7 +1,6 @@
 { 
     "defaultUsers": [
-        {"name":"admin", "email":"admin@example.com", "password": "admin", "roles":["admin"]},
-        {"name":"manager", "email":"manager@example.com", "password": "manager", "roles":["manage-users"]}
+        {"name":"admin", "email":"admin@example.com", "password": "admin", "roles":["admin"]}
     ],
     "removeAllUsers": true,
     "public":{
