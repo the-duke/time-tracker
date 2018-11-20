@@ -17,10 +17,10 @@ The web based user interface use material design elements and contain the follow
  ![alt Timer section for admin users](https://raw.github.com/the-duke/time-tracker/master/doc/images/Timers-Admin.png)
 
  ### Logs section for admin users to manage and view the total time for each timer in a specifiic time priod
- ![alt Logs for admin users](https://raw.github.com/the-duke/time-tracker/master/doc/images/Log-Entries-Admin.png
+ ![alt Logs for admin users](https://raw.github.com/the-duke/time-tracker/master/doc/images/Log-Entries-Admin.png)
 
  ### Settings section
- ![alt Settings section for admin users](https://raw.github.com/the-duke/time-tracker/master/doc/images/Settings-Admin.png
+ ![alt Settings section for admin users](https://raw.github.com/the-duke/time-tracker/master/doc/images/Settings-Admin.png)
  ##Setup
 ```
 git clone https://github.com/the-duke/time-tracker.git
