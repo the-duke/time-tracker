@@ -3,6 +3,7 @@
         {"name":"admin", "email":"admin@example.com", "password": "admin", "roles":["admin"]},
         {"name":"manager", "email":"manager@example.com", "password": "manager", "roles":["manage-users"]}
     ],
+    "removeAllUsers": true,
     "public":{
         "timerLimitEnable": true,
         "timerLimitTime": {

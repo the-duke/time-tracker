@@ -13,7 +13,9 @@
                 {{#each settings}}
                     <tr>
                         <td>{{name}}</td>
-                        <td> {{value}}</td>
+                        <td>
+                            {{>resValueTemplate}}
+                        </td>
                     </tr>
                 {{/each}}
                 </tbody>
@@ -26,8 +28,38 @@
     {{/if}}
 </template>
 
-<template name="settingRecord">
-    <div class="setting-row">
+<template name="settingValueString">
+    String
+</template>
 
+<template name="settingValueBoolean">
+    <div class="switch">
+        <label>
+            Off
+            <input type="checkbox" {{checked}}>
+            <span class="lever"></span>
+            On
+        </label>
+    </div>
+</template>
+
+<template name="settingValueNumber">
+    <p class="range-field">
+        <input type="range" min="10" max="100" value="{{value}}"/>
+    </p>
+</template>
+
+<template name="settingValueTime">
+    <div class="input-field col s6">
+        <input id="hours" type="text" class="validate" value="{{hours}}">
+        <label for="hours">Hours</label>
+    </div>
+    <div class="input-field col s6">
+        <input id="minutes" type="text" class="validate" value="{{minutes}}">
+        <label for="minutes">Minutes</label>
+    </div>
+    <div class="input-field col s6">
+        <input id="seconds" type="text" class="validate" value="{{seconds}}">
+        <label for="seconds">Seconds</label>
     </div>
 </template>

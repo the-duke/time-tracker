@@ -3,11 +3,11 @@ import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { Logs } from '../../imports/api/logs';
 import { Timers } from '../../imports/api/timers';
 import { TimerTotals } from '../../imports/api/timerTotals';
+import { Settings } from '../../imports/api/settings.js';
 
 import './logsPanel.html';
 
 Template.logsPanel.onCreated(function bodyOnCreated() {
-    //this.state = new ReactiveDict();
     this.selectedTimer = new ReactiveVar();
     this.startTime = new ReactiveVar();
     this.endTime = new ReactiveVar();
@@ -16,19 +16,14 @@ Template.logsPanel.onCreated(function bodyOnCreated() {
     this.currentPage.set(1);
 
     this.autorun(() => {
-        console.info(this.currentPage.get(), Meteor.settings.public);
-        var offset = (this.currentPage.get() - 1) * Meteor.settings.public.recordsPerPage;
-        console.info('current Paging offset', offset);
+        const settingsHandle = this.subscribe('settings');
+
+        const offset = (this.currentPage.get() - 1) * recordsPerPage();
         const timersHandle = this.subscribe('timers'),
               filterTimerTotalsHandle = this.subscribe('filterTimerTotals', buildLogFilter() ),
               filteredLogsHandle =  this.subscribe('filteredLogs', buildLogFilter(), offset);
     });
 });
-
-// Template.logsPanel.onRendered(function() {
-//     console.log('on rendered logsPanel');
-// });
-
 
 const buildLogFilter = () => {
     const selectedTimer = Template.instance().selectedTimer,
@@ -53,15 +48,19 @@ const buildLogFilter = () => {
 };
 
 const hasMorePages = () => {
-    //var currentPage = parseInt(FlowRouter.current().params.page) || 1;
     const currentPage = Template.instance().currentPage.get();
     const filteredLogCount = Counts.get('filteredLogCount');
-    return currentPage * parseInt(Meteor.settings.public.recordsPerPage) < filteredLogCount;
+    return currentPage * recordsPerPage() < filteredLogCount;
 }
 
 const pageCount = () => {
     var filteredLogCount = Counts.get('filteredLogCount');
-    return filteredLogCount? Math.ceil(filteredLogCount / parseInt(Meteor.settings.public.recordsPerPage)) : 0;
+    return filteredLogCount? Math.ceil(filteredLogCount / recordsPerPage()) : 0;
+}
+
+const recordsPerPage = () => {
+    const settingsRecord = Settings.findOne({key: 'recordsPerPage'});
+    return settingsRecord? settingsRecord.value : 20;
 }
 
 const resetPagination = () => {
@@ -82,6 +81,14 @@ Template.logsPanel.helpers({
         return pageCount() > 1; 
     },
 
+    recordsPerPage () {
+        return recordsPerPage();
+    },
+
+    paginationInfo: function () {
+        return 'Page: ' + Template.instance().currentPage.get() + ' / ' + pageCount() + '     ( ' + Counts.get('filteredLogCount') + ' filter results )';
+    },
+
     filteredLogs () {
         return Logs.find();
     },
@@ -99,10 +106,6 @@ Template.logsPanel.helpers({
             this.time.minutes.pad(2),
             this.time.seconds.pad(2)
         ].join(':');
-    },
-
-    paginationInfo: function () {
-        return 'Page: ' + Template.instance().currentPage.get() + ' / ' + pageCount() + '     ( ' + Counts.get('filteredLogCount') + ' filter results )';
     }
 });
 
@@ -134,14 +137,12 @@ Template.logsPanel.events({
         console.info('go to prev page');
         const previousPage = Template.instance().currentPage.get() === 1 ? 1 : Template.instance().currentPage.get() - 1;
         Template.instance().currentPage.set(previousPage)
-        //FlowRouter.go('logs', { page: previousPage });
     },
 
     'click #nextPage' (event) {
         console.info('go to next page');
         const nextPage = hasMorePages() ? Template.instance().currentPage.get() + 1 : Template.instance().currentPage.get();
         Template.instance().currentPage.set(nextPage);
-        //FlowRouter.go('logs', { page: nextPage });
     }
 });
 
@@ -205,14 +206,8 @@ Template.logEntry.helpers({
 });
 
 Template.logEntry.events({
-    'click .toggle-running-btn'() {
-        console.info('set timer');
-    },
     'click .delete-btn'() {
         console.info('delete log-entry with id', this._id);
         Logs.remove(this._id);
-    },
-    'click .reset-btn'() {
-
     }
 });

@@ -1,4 +1,5 @@
 import { Settings } from '../imports/api/settings.js';
+import { ServerHelpers } from './helpers.js';
 
 let defaultSettings = { 
     public: {
@@ -87,19 +88,18 @@ Meteor.publish('settings', function (filter) {
 
 Meteor.methods({
     updateSetting (key, value) {
-        if (!isAdmin(this.userId)) {
+        if (!ServerHelpers.isAdmin(this.userId)) {
             return this.ready();
         }
-
-        console.log('update setting with', key, '=', value);
-        Settings.findAndModify({
-            query: {key: key},
-            update: {
-                $set: { 
-                    running: true,
-                    startedAt: new Date()
-                }
-            }
-        });
+        
+        const setting = Settings.findOne({key: key});
+        if (setting) {
+            console.log('update setting with id=', setting, 'key=', key, '=', value);
+            Settings.update(setting._id, {
+                $set: { value: value }
+            });
+        } else {
+            throw new Error('no setting found for key=', key);
+        }
     }
 });
